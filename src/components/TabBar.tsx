@@ -29,7 +29,7 @@ export default function TabBar({ activeTab, onTabChange }: Props) {
           className={`tab-bar-item ${activeTab === id ? 'active' : ''}`}
           onClick={() => onTabChange(id)}
         >
-          <Icon className="tab-bar-icon" size={20} strokeWidth={2} aria-hidden />
+          <Icon className="tab-bar-icon" size={26} strokeWidth={1.5} aria-hidden />
           <span className="tab-bar-label">{label}</span>
         </button>
       ))}

@@ -25,6 +25,7 @@ export default function MainTabContent({
   onAdd,
 }: Props) {
   const [isInitial, setIsInitial] = useState(true);
+  const [openSourceId, setOpenSourceId] = useState<string | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setIsInitial(false), 1000);
@@ -83,6 +84,10 @@ export default function MainTabContent({
                   enteringIds.has(src.id) ? 'entering' :
                   isInitial ? 'initial' : 'idle'
                 }
+                isOpen={openSourceId === src.id}
+                onRequestOpen={() => setOpenSourceId(src.id)}
+                onTouchStartItem={() => setOpenSourceId(prev => prev === src.id ? prev : null)}
+                onClose={() => setOpenSourceId(null)}
               />
             ))}
           </div>

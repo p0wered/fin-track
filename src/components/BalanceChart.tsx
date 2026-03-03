@@ -4,8 +4,8 @@ import { formatAmount, formatMonthLabel, formatMonthShort } from '../types';
 const BAR_GAP = 12;
 const BAR_MIN_WIDTH = 56;
 const BAR_AREA_HEIGHT = 220;
-const VALUE_AREA_HEIGHT = 28;
-const RAIL_TOP_PADDING = 24;
+const VALUE_AREA_HEIGHT = 18;
+const RAIL_TOP_PADDING = 8;
 
 interface Props {
   data: [string, number][];

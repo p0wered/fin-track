@@ -605,12 +605,13 @@
 
 .tab-bar-icon {
   flex-shrink: 0;
-  opacity: 0.9;
+  opacity: 0.8;
   color: var(--accent);
 }
 
 .tab-bar-label {
   white-space: nowrap;
+  font-size: 1.1rem;
 }
 
 /* ===== Dynamics Page ===== */
@@ -671,11 +672,11 @@
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  height: 290px;
+  height: 270px;
 }
 
 .balance-chart-bar-cell {
-  flex: 0 0 56px;
+  flex: 0 0 66px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -689,7 +690,7 @@
   flex-direction: column;
   justify-content: flex-end;
   width: 100%;
-  max-width: 56px;
+  max-width: 66px;
   align-self: center;
 }
 

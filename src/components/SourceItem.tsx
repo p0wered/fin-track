@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type { FinanceSource } from '../types';
 import { formatAmount } from '../types';
 
@@ -11,6 +11,14 @@ interface Props {
   onDelete: () => void;
   index: number;
   animState: AnimState;
+  /** Открыт ли этот блок (свайпнут) — может быть только один */
+  isOpen: boolean;
+  /** Вызвать при открытии этого блока (свайп влево) */
+  onRequestOpen: () => void;
+  /** Вызвать при начале касания — закрыть другой открытый блок */
+  onTouchStartItem: () => void;
+  /** Вызвать при закрытии блока (свайп вправо или нажатие кнопки) */
+  onClose: () => void;
 }
 
 const ACTION_WIDTH = 128;
@@ -23,7 +31,7 @@ const ANIM_CLASS: Record<AnimState, string> = {
   idle: '',
 };
 
-export default function SourceItem({ source, pct, onEdit, onDelete, index, animState }: Props) {
+export default function SourceItem({ source, pct, onEdit, onDelete, index, animState, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
   const [offset, setOffset] = useState(0);
   const [animate, setAnimate] = useState(false);
   const startXRef = useRef(0);
@@ -37,10 +45,11 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
   }, []);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    onTouchStartItem();
     startXRef.current = e.touches[0].clientX;
     movedRef.current = false;
     setAnimate(false);
-  }, []);
+  }, [onTouchStartItem]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     const dx = e.touches[0].clientX - startXRef.current;
@@ -51,11 +60,25 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
 
   const handleTouchEnd = useCallback(() => {
     if (!movedRef.current) {
-      if (openRef.current) snapTo(0);
+      if (openRef.current) {
+        snapTo(0);
+        onClose();
+      }
       return;
     }
-    snapTo(offset < -SNAP_THRESHOLD ? -ACTION_WIDTH : 0);
-  }, [offset, snapTo]);
+    const willOpen = offset < -SNAP_THRESHOLD;
+    snapTo(willOpen ? -ACTION_WIDTH : 0);
+    if (willOpen) onRequestOpen();
+    else onClose();
+  }, [offset, snapTo, onRequestOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen && (openRef.current || offset !== 0)) {
+      setAnimate(true);
+      setOffset(0);
+      openRef.current = false;
+    }
+  }, [isOpen]);
 
   return (
     <div
@@ -67,6 +90,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
           className="action-btn edit-btn"
           onClick={() => {
             snapTo(0);
+            onClose();
             onEdit();
           }}
           aria-label="Редактировать"
@@ -80,6 +104,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
           className="action-btn delete-btn"
           onClick={() => {
             snapTo(0);
+            onClose();
             onDelete();
           }}
           aria-label="Удалить"
