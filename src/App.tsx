@@ -1,11 +1,15 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import DonutChart from './components/DonutChart';
-import SourceItem from './components/SourceItem';
 import SourceModal from './components/SourceModal';
+import TabBar from './components/TabBar';
+import type { TabId } from './components/TabBar';
+import DynamicsPage from './pages/DynamicsPage';
+import MainTabContent from './pages/MainTabContent';
 import type { FinanceSource } from './types';
+import { getCurrentMonthKey } from './types';
 import './App.css';
 
 const STORAGE_KEY = 'fin-track-sources';
+const MONTHLY_BALANCE_KEY = 'fin-track-monthly-balance';
 
 function loadSources(): FinanceSource[] {
   try {
@@ -16,20 +20,25 @@ function loadSources(): FinanceSource[] {
   }
 }
 
+function loadMonthlyBalances(): Record<string, number> {
+  try {
+    const raw = localStorage.getItem(MONTHLY_BALANCE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
 function App() {
   const [sources, setSources] = useState<FinanceSource[]>(loadSources);
+  const [monthlyBalances, setMonthlyBalances] = useState<Record<string, number>>(loadMonthlyBalances);
+  const [activeTab, setActiveTab] = useState<TabId>('main');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalClosing, setModalClosing] = useState(false);
   const [editing, setEditing] = useState<FinanceSource | null>(null);
   const [leavingIds, setLeavingIds] = useState<Set<string>>(new Set());
   const [enteringIds, setEnteringIds] = useState<Set<string>>(new Set());
-  const isInitialMount = useRef(true);
   const closingRef = useRef(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => { isInitialMount.current = false; }, 1000);
-    return () => clearTimeout(t);
-  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
@@ -44,6 +53,15 @@ function App() {
     () => sources.reduce((s, src) => s + src.amount, 0),
     [sources],
   );
+
+  useEffect(() => {
+    const monthKey = getCurrentMonthKey();
+    setMonthlyBalances(prev => {
+      const next = { ...prev, [monthKey]: total };
+      localStorage.setItem(MONTHLY_BALANCE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, [total]);
 
   const animateModalClose = useCallback(() => {
     if (closingRef.current) return;
@@ -109,72 +127,28 @@ function App() {
     [animateModalClose],
   );
 
-  const activeCount = activeSources.length;
-
-  const sortedSources = useMemo(
-    () => [...sources].sort((a, b) => b.amount - a.amount),
-    [sources],
-  );
-
   return (
     <div className="app">
-      <section
-        className="donut-section anim-fade-slide"
-        style={{ '--delay': '0.05s' } as React.CSSProperties}
-      >
-        <DonutChart sources={activeSources} />
-      </section>
-
-      <section className="sources-section">
-        <div
-          className="section-header anim-fade-slide"
-          style={{ '--delay': '0.15s' } as React.CSSProperties}
-        >
-          <h2 className="section-title">Источники</h2>
-          {activeCount > 0 && (
-            <span className="section-count" key={activeCount}>
-              {activeCount}
-            </span>
-          )}
-        </div>
-
-        {sources.length === 0 ? (
-          <div
-            className="empty-state anim-fade-slide"
-            style={{ '--delay': '0.25s' } as React.CSSProperties}
-          >
-            <div className="empty-icon">💰</div>
-            <p>Добавьте свой первый источник</p>
-          </div>
-        ) : (
-          <div className="sources-list">
-            {sortedSources.map((src, idx) => (
-              <SourceItem
-                key={src.id}
-                source={src}
-                pct={total > 0 ? (src.amount / total) * 100 : 0}
-                onEdit={() => openEdit(src)}
-                onDelete={() => handleDelete(src.id)}
-                index={idx}
-                animState={
-                  leavingIds.has(src.id) ? 'leaving' :
-                  enteringIds.has(src.id) ? 'entering' :
-                  isInitialMount.current ? 'initial' : 'idle'
-                }
-              />
-            ))}
-          </div>
+      <div className="app-content">
+        {activeTab === 'main' && (
+          <MainTabContent
+            sources={sources}
+            activeSources={activeSources}
+            total={total}
+            leavingIds={leavingIds}
+            enteringIds={enteringIds}
+            onEdit={openEdit}
+            onDelete={handleDelete}
+            onAdd={openAdd}
+          />
         )}
 
-        <button
-          className="add-source-btn anim-fade-slide"
-          style={{ '--delay': `${0.25 + sources.length * 0.06}s` } as React.CSSProperties}
-          onClick={openAdd}
-        >
-          <span className="add-icon">+</span>
-          Добавить источник
-        </button>
-      </section>
+        {activeTab === 'dynamics' && (
+          <DynamicsPage monthlyBalances={monthlyBalances} />
+        )}
+      </div>
+
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {modalVisible && (
         <SourceModal
@@ -184,6 +158,7 @@ function App() {
           closing={modalClosing}
         />
       )}
+
     </div>
   );
 }

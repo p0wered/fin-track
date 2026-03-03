@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import type { FinanceSource } from '../types';
 import { COLORS } from '../types';
 
@@ -20,11 +20,9 @@ export default function SourceModal({ source, onSave, onClose, closing }: Props)
   const [name, setName] = useState(source?.name ?? '');
   const [amount, setAmount] = useState(source ? String(source.amount) : '');
   const [color, setColor] = useState(source?.color ?? COLORS[0]);
-  const nameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    nameRef.current?.focus();
     return () => {
       document.body.style.overflow = '';
     };
@@ -69,7 +67,6 @@ export default function SourceModal({ source, onSave, onClose, closing }: Props)
         <div className="form-group" style={{ '--fi': 0 } as React.CSSProperties}>
           <label className="form-label">Название</label>
           <input
-            ref={nameRef}
             className="form-input"
             type="text"
             placeholder="Например, Сбербанк"
