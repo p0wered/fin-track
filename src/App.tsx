@@ -111,6 +111,11 @@ function App() {
 
   const activeCount = activeSources.length;
 
+  const sortedSources = useMemo(
+    () => [...sources].sort((a, b) => b.amount - a.amount),
+    [sources],
+  );
+
   return (
     <div className="app">
       <section
@@ -143,7 +148,7 @@ function App() {
           </div>
         ) : (
           <div className="sources-list">
-            {sources.map((src, idx) => (
+            {sortedSources.map((src, idx) => (
               <SourceItem
                 key={src.id}
                 source={src}
