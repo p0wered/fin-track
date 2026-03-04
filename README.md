@@ -1,73 +1,96 @@
-# React + TypeScript + Vite
+## FinTrack
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FinTrack — это минималистичное мобильное веб‑приложение для отслеживания личных финансовых источников и динамики общего баланса.
 
-Currently, two official plugins are available:
+Приложение оптимизировано под мобильный формат (iOS/Android) и повторяет ощущения нативного приложения: аккуратная анимация, плавные переходы, плавающий таб‑бар.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Основные возможности
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Экран «Баланс»**
+  - Круговая диаграмма с анимированным общим балансом.
+  - Список источников с названием, суммой и процентом от общего баланса.
+  - Добавление/редактирование/удаление источников через удобную модалку.
+  - Свайп по строке источника влево открывает действия:
+    - **Редактировать**
+    - **Удалить**
 
-## Expanding the ESLint configuration
+- **Экран «Динамика»**
+  - Столбчатая диаграмма баланса по месяцам.
+  - По горизонтали — месяцы, по вертикали — величина баланса на конец месяца.
+  - Баланс сохраняется автоматически при каждом изменении источников (по ключу месяца `YYYY-MM`).
+  - В заголовке справа выводится текущий год.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Навигация**
+  - Плавающий таб‑бар внизу экрана в стиле iOS «floating island» (без эффекта стекла).
+  - Вкладки:
+    - **Баланс**
+    - **Динамика**
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Персистентность**
+  - Все данные хранятся в `localStorage`:
+    - Источники: `fin-track-sources`
+    - Месячные балансы: `fin-track-monthly-balance`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Технологии
+
+- **React 19** + **TypeScript**
+- **Vite** — сборка и dev‑сервер
+- **CSS-анимации** для переходов и появления элементов
+- **lucide-react** — иконки для таб‑бара
+- **localStorage** — хранение данных на устройстве
+
+---
+
+## Структура проекта (упрощённо)
+
+- `src/main.tsx` — точка входа, монтирование React-приложения.
+- `src/App.tsx` — корневой компонент, состояние источников, месячных балансов и текущей вкладки.
+- `src/types.ts`
+  - `FinanceSource` — тип источника.
+  - `MonthlyBalances` — балансы на конец месяца.
+  - `formatAmount` — форматирование суммы в ₽.
+  - `getCurrentMonthKey`, `formatMonthLabel`, `formatMonthShort` — работа с месяцами.
+- `src/components/DonutChart.tsx` — круговая диаграмма общего баланса.
+- `src/components/SourceItem.tsx` — элемент списка источников со свайпом.
+- `src/components/SourceModal.tsx` — модалка добавления/редактирования источника.
+- `src/components/TabBar.tsx` — плавающий таб‑бар снизу.
+- `src/components/BalanceChart.tsx` — столбчатая диаграмма динамики.
+- `src/pages/MainTabContent.tsx` — контент вкладки «Баланс».
+- `src/pages/DynamicsPage.tsx` — контент вкладки «Динамика».
+- `src/index.css`, `src/App.css` — глобальные и экранные стили.
+
+---
+
+## Локальный запуск
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+По умолчанию приложение будет доступно по адресу `http://localhost:5173` (порт может отличаться — смотрите вывод Vite).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Рекомендуется открывать FinTrack на мобильном устройстве или в devtools в режиме эмуляции телефона.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Сборка
+
+```bash
+npm run build
 ```
+
+Собранные файлы будут в директории `dist/`.
+
+---
+
+## Известные ограничения
+
+- Нет бэкенда — все данные хранятся только в `localStorage` и привязаны к конкретному браузеру/устройству.
+- Баланс по месяцам считается по итоговому состоянию на конец месяца (изменения внутри месяца не логируются).
+- Авторизация и профили пользователей отсутствуют — приложение рассчитано на одного пользователя на одном устройстве.
+
