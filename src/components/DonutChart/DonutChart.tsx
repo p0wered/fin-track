@@ -1,6 +1,10 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
-import type { FinanceSource } from '../types';
-import { formatAmount } from '../types';
+import { m } from 'motion/react';
+import type { FinanceSource } from '../../types.ts';
+import { formatAmount } from '../../types.ts';
+import styles from './DonutChart.module.css';
+
+const EASE = [0.4, 0, 0.2, 1] as const;
 
 const SIZE = 300;
 const CX = SIZE / 2;
@@ -226,12 +230,17 @@ export default function DonutChart({ sources }: Props) {
   }, [displaySegs]);
 
   return (
-    <div className="donut-container">
+    <m.div
+      className={styles.container}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+    >
       <svg
         width={SIZE}
         height={SIZE}
         viewBox={`0 0 ${SIZE} ${SIZE}`}
-        className="donut-svg"
+        className={styles.svg}
       >
         <circle
           cx={CX}
@@ -243,10 +252,15 @@ export default function DonutChart({ sources }: Props) {
         />
         {svgContent}
       </svg>
-      <div className="donut-center">
-        <span className="donut-label">Всего</span>
-        <span className="donut-amount">{formatAmount(animatedTotal)}</span>
-      </div>
-    </div>
+      <m.div
+        className={styles.center}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: EASE, delay: 0.35 }}
+      >
+        <span className={styles.label}>Всего</span>
+        <span className={styles.amount}>{formatAmount(animatedTotal)}</span>
+      </m.div>
+    </m.div>
   );
 }

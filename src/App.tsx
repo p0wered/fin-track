@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import SourceModal from './components/SourceModal';
-import TabBar from './components/TabBar';
-import type { TabId } from './components/TabBar';
-import DynamicsPage from './pages/DynamicsPage';
-import MainTabContent from './pages/MainTabContent';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { LazyMotion, domAnimation, MotionConfig, AnimatePresence } from 'motion/react';
+import SourceModal from './components/SourceModal/SourceModal.tsx';
+import TabBar from './components/TabBar/TabBar.tsx';
+import type { TabId } from './components/TabBar/TabBar.tsx';
+import DynamicsPage from './pages/DynamicsPage/DynamicsPage.tsx';
+import MainTabContent from './pages/MainTab/MainTabContent.tsx';
 import type { FinanceSource } from './types';
 import { getCurrentMonthKey } from './types';
-import './App.css';
 
 const STORAGE_KEY = 'fin-track-sources';
 const MONTHLY_BALANCE_KEY = 'fin-track-monthly-balance';
@@ -31,74 +31,43 @@ function loadMonthlyBalances(): Record<string, number> {
 
 function App() {
   const [sources, setSources] = useState<FinanceSource[]>(loadSources);
-  const [monthlyBalances, setMonthlyBalances] = useState<Record<string, number>>(loadMonthlyBalances);
+  const [persistedBalances] = useState<Record<string, number>>(loadMonthlyBalances);
   const [activeTab, setActiveTab] = useState<TabId>('main');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalClosing, setModalClosing] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<FinanceSource | null>(null);
-  const [leavingIds, setLeavingIds] = useState<Set<string>>(new Set());
-  const [enteringIds, setEnteringIds] = useState<Set<string>>(new Set());
-  const closingRef = useRef(false);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sources));
   }, [sources]);
-
-  const activeSources = useMemo(
-    () => sources.filter(s => !leavingIds.has(s.id)),
-    [sources, leavingIds],
-  );
 
   const total = useMemo(
     () => sources.reduce((s, src) => s + src.amount, 0),
     [sources],
   );
 
-  useEffect(() => {
-    const monthKey = getCurrentMonthKey();
-    setMonthlyBalances(prev => {
-      const next = { ...prev, [monthKey]: total };
-      localStorage.setItem(MONTHLY_BALANCE_KEY, JSON.stringify(next));
-      return next;
-    });
-  }, [total]);
+  const monthlyBalances = useMemo(
+    () => ({ ...persistedBalances, [getCurrentMonthKey()]: total }),
+    [persistedBalances, total],
+  );
 
-  const animateModalClose = useCallback(() => {
-    if (closingRef.current) return;
-    closingRef.current = true;
-    setModalClosing(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      setModalClosing(false);
-      setEditing(null);
-      closingRef.current = false;
-    }, 300);
-  }, []);
+  useEffect(() => {
+    localStorage.setItem(MONTHLY_BALANCE_KEY, JSON.stringify(monthlyBalances));
+  }, [monthlyBalances]);
 
   const openAdd = useCallback(() => {
     setEditing(null);
-    setModalVisible(true);
-    setModalClosing(false);
-    closingRef.current = false;
+    setModalOpen(true);
   }, []);
 
   const openEdit = useCallback((src: FinanceSource) => {
     setEditing(src);
-    setModalVisible(true);
-    setModalClosing(false);
-    closingRef.current = false;
+    setModalOpen(true);
   }, []);
 
+  const closeModal = useCallback(() => setModalOpen(false), []);
+
   const handleDelete = useCallback((id: string) => {
-    setLeavingIds(prev => new Set(prev).add(id));
-    setTimeout(() => {
-      setSources(prev => prev.filter(s => s.id !== id));
-      setLeavingIds(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-    }, 400);
+    setSources(prev => prev.filter(s => s.id !== id));
   }, []);
 
   const handleSave = useCallback(
@@ -108,58 +77,50 @@ function App() {
           prev.map(s => (s.id === data.id ? { ...s, ...data } as FinanceSource : s)),
         );
       } else {
-        const newId = crypto.randomUUID();
         setSources(prev => [
           ...prev,
-          { id: newId, name: data.name, amount: data.amount, color: data.color },
+          { id: crypto.randomUUID(), name: data.name, amount: data.amount, color: data.color },
         ]);
-        setEnteringIds(prev => new Set(prev).add(newId));
-        setTimeout(() => {
-          setEnteringIds(prev => {
-            const next = new Set(prev);
-            next.delete(newId);
-            return next;
-          });
-        }, 500);
       }
-      animateModalClose();
+      closeModal();
     },
-    [animateModalClose],
+    [closeModal],
   );
 
   return (
-    <div className="app">
-      <div className="app-content">
-        {activeTab === 'main' && (
-          <MainTabContent
-            sources={sources}
-            activeSources={activeSources}
-            total={total}
-            leavingIds={leavingIds}
-            enteringIds={enteringIds}
-            onEdit={openEdit}
-            onDelete={handleDelete}
-            onAdd={openAdd}
-          />
-        )}
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <div className="app">
+          <div className="app-content">
+            {activeTab === 'main' && (
+              <MainTabContent
+                sources={sources}
+                total={total}
+                onEdit={openEdit}
+                onDelete={handleDelete}
+                onAdd={openAdd}
+              />
+            )}
 
-        {activeTab === 'dynamics' && (
-          <DynamicsPage monthlyBalances={monthlyBalances} />
-        )}
-      </div>
+            {activeTab === 'dynamics' && (
+              <DynamicsPage monthlyBalances={monthlyBalances} />
+            )}
+          </div>
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+          <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {modalVisible && (
-        <SourceModal
-          source={editing}
-          onSave={handleSave}
-          onClose={animateModalClose}
-          closing={modalClosing}
-        />
-      )}
-
-    </div>
+          <AnimatePresence onExitComplete={() => setEditing(null)}>
+            {modalOpen && (
+              <SourceModal
+                source={editing}
+                onSave={handleSave}
+                onClose={closeModal}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+      </MotionConfig>
+    </LazyMotion>
   );
 }
 

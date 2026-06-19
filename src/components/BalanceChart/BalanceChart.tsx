@@ -1,5 +1,9 @@
 import { useMemo, useRef, useEffect } from 'react';
-import { formatAmount, formatMonthLabel, formatMonthShort } from '../types';
+import { m } from 'motion/react';
+import { formatAmount, formatMonthLabel, formatMonthShort } from '../../types.ts';
+import styles from './BalanceChart.module.css';
+
+const EASE = [0.4, 0, 0.2, 1] as const;
 
 const BAR_GAP = 12;
 const BAR_MIN_WIDTH = 56;
@@ -27,11 +31,16 @@ export default function BalanceChart({ data }: Props) {
 
   if (sorted.length === 0) {
     return (
-      <div className="balance-chart-empty anim-fade-slide" style={{ '--delay': '0.15s' } as React.CSSProperties}>
-        <div className="balance-chart-empty-icon">📊</div>
+      <m.div
+        className={styles.empty}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
+      >
+        <div className={styles.emptyIcon}>📊</div>
         <p>Пока нет данных по месяцам</p>
-        <p className="balance-chart-empty-hint">Баланс на конец каждого месяца будет сохраняться автоматически</p>
-      </div>
+        <p className={styles.hint}>Баланс на конец каждого месяца будет сохраняться автоматически</p>
+      </m.div>
     );
   }
 
@@ -40,48 +49,53 @@ export default function BalanceChart({ data }: Props) {
   const railHeight = BAR_AREA_HEIGHT + VALUE_AREA_HEIGHT + RAIL_TOP_PADDING;
 
   return (
-    <div className="balance-chart-wrap anim-fade-slide" style={{ '--delay': '0.08s' } as React.CSSProperties}>
+    <m.div
+      className={styles.wrap}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+    >
       <div
-        className="balance-chart-scroll"
+        className={styles.scroll}
         ref={containerRef}
         role="region"
         aria-label="Динамика баланса по месяцам"
       >
         <div
-          className="balance-chart-inner"
+          className={styles.inner}
           style={{ width: totalWidth, minWidth: '100%' }}
         >
           {sorted.map(([monthKey, balance], i) => {
             const heightPct = maxBalance > 0 ? (balance / maxBalance) * 100 : 0;
             const barHeightPx = (BAR_AREA_HEIGHT * heightPct) / 100;
             return (
-              <div
+              <m.div
                 key={monthKey}
-                className="balance-chart-bar-cell"
-                style={{
-                  '--i': i,
-                } as React.CSSProperties}
+                className={styles.barCell}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, ease: EASE, delay: 0.1 + i * 0.04 }}
               >
-                <div className="balance-chart-bar-rail" style={{ height: railHeight }}>
-                  <div className="balance-chart-bar-rail-top" style={{ height: RAIL_TOP_PADDING }} />
-                  <div className="balance-chart-bar-rail-spacer" />
-                  <div className="balance-chart-bar-value" title={formatAmount(balance)}>
+                <div className={styles.barRail} style={{ height: railHeight }}>
+                  <div className={styles.barRailTop} style={{ height: RAIL_TOP_PADDING }} />
+                  <div className={styles.barRailSpacer} />
+                  <div className={styles.barValue} title={formatAmount(balance)}>
                     {formatAmount(balance)}
                   </div>
                   <div
-                    className="balance-chart-bar"
+                    className={styles.bar}
                     style={{ height: barHeightPx }}
                     aria-label={`${formatMonthLabel(monthKey)}: ${formatAmount(balance)}`}
                   />
                 </div>
-                <div className="balance-chart-bar-label">
+                <div className={styles.barLabel}>
                   {formatMonthShort(monthKey)}
                 </div>
-              </div>
+              </m.div>
             );
           })}
         </div>
       </div>
-    </div>
+    </m.div>
   );
 }

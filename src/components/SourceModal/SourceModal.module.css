@@ -1,0 +1,135 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(var(--overlay-blur));
+  -webkit-backdrop-filter: blur(var(--overlay-blur));
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheet {
+  background: var(--surface);
+  width: calc(100% - 32px);
+  max-width: var(--content-max);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-7) var(--space-6) var(--space-6);
+  box-shadow: var(--shadow-sheet);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--fs-title);
+  font-weight: 600;
+}
+
+.close {
+  background: var(--surface-2);
+  border: none;
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-circle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: var(--fs-body);
+  line-height: 1;
+  transition: background var(--dur-base), transform var(--dur-fast);
+}
+
+.close:active {
+  background: var(--surface-3);
+  transform: scale(0.9);
+}
+
+.formGroup {
+  margin-bottom: var(--space-5);
+}
+
+.label {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-4) var(--space-4);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: var(--fs-base);
+  outline: none;
+  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--ring-accent);
+}
+
+.input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.colorPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.colorOption {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-circle);
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: transform var(--dur-fast), border-color var(--dur-fast);
+}
+
+.colorOption.selected {
+  border-color: #fff;
+  transform: scale(1.15);
+}
+
+.colorOption:active {
+  transform: scale(1.15);
+}
+
+.saveBtn {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--dur-base), transform var(--dur-fast);
+  margin-top: var(--space-3);
+}
+
+.saveBtn:active {
+  background: var(--accent-hover);
+  transform: scale(0.97);
+}
+
+.saveBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

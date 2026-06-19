@@ -1,16 +1,15 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import type { FinanceSource } from '../types';
-import { formatAmount } from '../types';
-
-type AnimState = 'initial' | 'entering' | 'leaving' | 'idle';
+import { useState, useRef, useCallback } from 'react';
+import { m } from 'motion/react';
+import type { Variants } from 'motion/react';
+import type { FinanceSource } from '../../types.ts';
+import { formatAmount } from '../../types.ts';
+import styles from './SourceItem.module.css';
 
 interface Props {
   source: FinanceSource;
   pct: number;
   onEdit: () => void;
   onDelete: () => void;
-  index: number;
-  animState: AnimState;
   /** Открыт ли этот блок (свайпнут) — может быть только один */
   isOpen: boolean;
   /** Вызвать при открытии этого блока (свайп влево) */
@@ -24,43 +23,49 @@ interface Props {
 const ACTION_WIDTH = 128;
 const SNAP_THRESHOLD = ACTION_WIDTH / 2;
 
-const ANIM_CLASS: Record<AnimState, string> = {
-  initial: ' initial',
-  entering: ' entering',
-  leaving: ' leaving',
-  idle: '',
+// Метки вход/выход не задаём — наследуем от контейнера списка (stagger)
+// и от AnimatePresence (exit).
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
+  exit: {
+    opacity: 0,
+    x: -30,
+    height: 0,
+    marginBottom: 0,
+    transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+  },
 };
 
-export default function SourceItem({ source, pct, onEdit, onDelete, index, animState, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
+export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
   const [offset, setOffset] = useState(0);
   const [animate, setAnimate] = useState(false);
   const startXRef = useRef(0);
-  const openRef = useRef(false);
+  const baseRef = useRef(0); // позиция покоя, зафиксированная на старте свайпа
   const movedRef = useRef(false);
 
   const snapTo = useCallback((val: number) => {
     setAnimate(true);
     setOffset(val);
-    openRef.current = val !== 0;
   }, []);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     onTouchStartItem();
     startXRef.current = e.touches[0].clientX;
+    baseRef.current = offset;
     movedRef.current = false;
     setAnimate(false);
-  }, [onTouchStartItem]);
+  }, [onTouchStartItem, offset]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     const dx = e.touches[0].clientX - startXRef.current;
     if (Math.abs(dx) > 4) movedRef.current = true;
-    const base = openRef.current ? -ACTION_WIDTH : 0;
-    setOffset(Math.min(0, Math.max(base + dx, -ACTION_WIDTH)));
+    setOffset(Math.min(0, Math.max(baseRef.current + dx, -ACTION_WIDTH)));
   }, []);
 
   const handleTouchEnd = useCallback(() => {
     if (!movedRef.current) {
-      if (openRef.current) {
+      if (offset !== 0) {
         snapTo(0);
         onClose();
       }
@@ -72,22 +77,22 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
     else onClose();
   }, [offset, snapTo, onRequestOpen, onClose]);
 
-  useEffect(() => {
-    if (!isOpen && (openRef.current || offset !== 0)) {
+  // Родитель закрыл блок (открыли другой) — сбрасываем свайп во время рендера,
+  // чтобы не плодить эффект с setState.
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+    if (!isOpen && offset !== 0) {
       setAnimate(true);
       setOffset(0);
-      openRef.current = false;
     }
-  }, [isOpen]);
+  }
 
   return (
-    <div
-      className={`source-item-wrapper${ANIM_CLASS[animState]}`}
-      style={{ '--i': index } as React.CSSProperties}
-    >
-      <div className="source-item-actions">
+    <m.div className={styles.wrapper} variants={itemVariants}>
+      <div className={styles.actions}>
         <button
-          className="action-btn edit-btn"
+          className={`${styles.actionBtn} ${styles.editBtn}`}
           onClick={() => {
             snapTo(0);
             onClose();
@@ -101,7 +106,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
           </svg>
         </button>
         <button
-          className="action-btn delete-btn"
+          className={`${styles.actionBtn} ${styles.deleteBtn}`}
           onClick={() => {
             snapTo(0);
             onClose();
@@ -116,7 +121,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
         </button>
       </div>
       <div
-        className="source-item"
+        className={styles.item}
         style={{
           transform: `translateX(${offset}px)`,
           transition: animate ? 'transform 0.3s cubic-bezier(.4,0,.2,1)' : 'none',
@@ -126,16 +131,13 @@ export default function SourceItem({ source, pct, onEdit, onDelete, index, animS
         onTouchEnd={handleTouchEnd}
         onTransitionEnd={() => setAnimate(false)}
       >
-        <div
-          className="source-dot"
-          style={{ background: source.color }}
-        />
-        <div className="source-info">
-          <span className="source-name">{source.name}</span>
-          <span className="source-pct">{pct.toFixed(1)}%</span>
+        <div className={styles.dot} style={{ background: source.color }} />
+        <div className={styles.info}>
+          <span className={styles.name}>{source.name}</span>
+          <span className={styles.pct}>{pct.toFixed(1)}%</span>
         </div>
-        <span className="source-amount">{formatAmount(source.amount)}</span>
+        <span className={styles.amount}>{formatAmount(source.amount)}</span>
       </div>
-    </div>
+    </m.div>
   );
 }

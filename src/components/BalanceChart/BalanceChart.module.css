@@ -1,0 +1,105 @@
+.wrap {
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  padding: var(--space-5);
+  overflow: hidden;
+}
+
+.scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: var(--space-1);
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.inner {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  height: 270px;
+}
+
+.barCell {
+  flex: 0 0 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.barRail {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 66px;
+  align-self: center;
+}
+
+.barRailSpacer {
+  flex: 1;
+  min-height: 0;
+}
+
+.barRailTop {
+  flex-shrink: 0;
+}
+
+.barValue {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.bar {
+  width: 100%;
+  min-height: 6px;
+  background: var(--accent);
+  border-radius: 8px;
+  transition: height var(--dur-slow) var(--ease-standard);
+  flex-shrink: 0;
+}
+
+.barLabel {
+  font-size: var(--fs-2xs);
+  color: var(--text-secondary);
+  margin-top: var(--space-2);
+  white-space: nowrap;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px var(--space-7);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  color: var(--text-secondary);
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty p {
+  font-size: var(--fs-md);
+  margin-bottom: var(--space-1);
+}
+
+/* выше специфичность, чем у `.empty p`, — без !important */
+.empty .hint {
+  font-size: var(--fs-sm);
+  opacity: 0.8;
+}

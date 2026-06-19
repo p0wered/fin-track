@@ -1,0 +1,30 @@
+.page {
+  padding-top: var(--space-4);
+}
+
+.section {
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-3);
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.year {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.chartSection {
+  margin-bottom: var(--space-4);
+}

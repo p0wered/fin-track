@@ -1,0 +1,78 @@
+.donutSection {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.sourcesSection {
+  margin-bottom: var(--space-7);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-2);
+}
+
+.sectionTitle {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.sectionCount {
+  font-size: var(--fs-sm);
+  line-height: 1;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  padding: 3px 12px 4px;
+  border-radius: var(--radius-sm);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 36px var(--space-5);
+  color: var(--text-secondary);
+}
+
+.emptyState p {
+  font-size: var(--fs-body);
+  margin-top: 10px;
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  opacity: 0.4;
+  animation: float 3s ease-in-out infinite;
+}
+
+.addBtn {
+  width: 100%;
+  padding: var(--space-5);
+  margin-top: var(--space-1);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  transition: border-color var(--dur-base), color var(--dur-base), transform 0.2s;
+}
+
+.addBtn:active {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(0.97);
+}
+
+.addIcon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
