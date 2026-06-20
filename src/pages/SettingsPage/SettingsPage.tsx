@@ -26,6 +26,9 @@ export default function SettingsPage({ data, onImport }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
 
+  const themeIndex = THEME_OPTIONS.findIndex((o) => o.id === theme);
+  const langIndex = LANGS.findIndex((l) => l.id === lang);
+
   const handleExport = () => {
     downloadBackup(data);
   };
@@ -68,8 +71,12 @@ export default function SettingsPage({ data, onImport }: Props) {
         <h2 className={styles.cardTitle}>{t('settings.appearance')}</h2>
 
         <div className={styles.row}>
-          <span className={styles.rowLabel}>{t('settings.theme')}</span>
           <div className={styles.segmented} role="group" aria-label={t('settings.theme')}>
+            <span
+              className={styles.thumb}
+              style={{ '--count': THEME_OPTIONS.length, '--index': themeIndex } as React.CSSProperties}
+              aria-hidden
+            />
             {THEME_OPTIONS.map(({ id, labelKey, Icon }) => (
               <button
                 key={id}
@@ -78,7 +85,7 @@ export default function SettingsPage({ data, onImport }: Props) {
                 aria-pressed={theme === id}
                 onClick={() => setTheme(id)}
               >
-                <Icon size={16} strokeWidth={1.8} aria-hidden />
+                <Icon size={18} strokeWidth={1.8} aria-hidden />
                 {t(labelKey)}
               </button>
             ))}
@@ -86,8 +93,12 @@ export default function SettingsPage({ data, onImport }: Props) {
         </div>
 
         <div className={styles.row}>
-          <span className={styles.rowLabel}>{t('settings.language')}</span>
           <div className={styles.segmented} role="group" aria-label={t('settings.language')}>
+            <span
+              className={styles.thumb}
+              style={{ '--count': LANGS.length, '--index': langIndex } as React.CSSProperties}
+              aria-hidden
+            />
             {LANGS.map(({ id, label }) => (
               <button
                 key={id}

@@ -43,50 +43,53 @@
 }
 
 .row + .row {
-  margin-top: var(--space-5);
-}
-
-.rowLabel {
-  font-size: var(--fs-base);
-  font-weight: 500;
+  margin-top: var(--space-3);
 }
 
 .segmented {
+  position: relative;
   display: flex;
-  flex: 0 0 auto;
-  width: 14rem;
-  gap: var(--space-1);
+  width: 100%;
   padding: var(--space-1);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  background: var(--bg);
   border-radius: var(--radius-lg);
 }
 
+.thumb {
+  position: absolute;
+  top: var(--space-1);
+  left: var(--space-1);
+  width: calc((100% - 2 * var(--space-1)) / var(--count));
+  bottom: var(--space-1);
+  background: var(--surface-3);
+  border-radius: var(--radius-md);
+  transform: translateX(calc(var(--index) * 100%));
+  transition: transform var(--dur-fast) cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 .segment {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   flex: 1;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
+  gap: var(--space-3);
+  padding: 10px var(--space-4);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--text-secondary);
-  font-size: var(--fs-sm);
-  font-weight: 500;
+  font-size: var(--fs-base);
+  font-weight: 400;
   cursor: pointer;
   white-space: nowrap;
-  transition: background var(--dur-base), color var(--dur-base), transform var(--dur-fast);
-}
-
-.segment:active {
-  transform: scale(0.95);
+  transition: color var(--dur-base);
 }
 
 .segmentActive {
-  background: var(--surface-3);
   color: var(--text);
+  font-weight: 600;
 }
 
 .segmentActive svg {
@@ -106,14 +109,14 @@
   gap: var(--space-3);
   width: 100%;
   padding: 14px;
-  border: 1px solid var(--border);
+  border: none;
   border-radius: var(--radius-md);
-  background: var(--surface-2);
+  background: var(--surface-3);
   color: var(--text);
   font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
-  transition: background var(--dur-base), border-color var(--dur-base), transform var(--dur-fast);
+  transition: background var(--dur-base), transform var(--dur-fast);
 }
 
 .action svg {
@@ -121,7 +124,7 @@
 }
 
 .action:active {
-  background: var(--surface-3);
+  background: var(--border);
   transform: scale(0.98);
 }
 

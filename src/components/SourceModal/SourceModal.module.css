@@ -73,12 +73,11 @@
   color: var(--text);
   font-size: var(--fs-base);
   outline: none;
-  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+  transition: border-color var(--dur-base);
 }
 
 .input:focus {
   border-color: var(--accent);
-  box-shadow: var(--ring-accent);
 }
 
 .input::placeholder {
