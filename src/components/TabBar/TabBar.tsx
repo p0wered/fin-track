@@ -20,6 +20,8 @@ const TABS: { id: TabId; labelKey: TranslationKey; Icon: typeof Wallet }[] = [
 export default function TabBar({ activeTab, onTabChange }: Props) {
   const { t } = useSettings();
 
+  const activeIndex = TABS.findIndex((tab) => tab.id === activeTab);
+
   return (
     <m.nav
       className={styles.bar}
@@ -29,6 +31,11 @@ export default function TabBar({ activeTab, onTabChange }: Props) {
       animate={{ x: '-50%', y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
     >
+      <span
+        className={styles.thumb}
+        style={{ '--count': TABS.length, '--index': activeIndex } as React.CSSProperties}
+        aria-hidden
+      />
       {TABS.map(({ id, labelKey, Icon }) => {
         const label = t(labelKey);
         return (

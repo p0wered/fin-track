@@ -17,29 +17,39 @@
   max-width: var(--content-max);
 }
 
-.item {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background var(--dur-base), color var(--dur-base), transform 0.2s;
-}
-
-.item:active {
-  transform: scale(0.9);
-}
-
-.item.active {
+.thumb {
+  position: absolute;
+  top: var(--space-1);
+  left: var(--space-1);
+  width: calc((100% - 4 * var(--space-1)) / var(--count));
+  bottom: var(--space-1);
   background: var(--tabbar-bg);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--tabbar-border);
+  border-radius: var(--radius-pill);
+  transform: translateX(calc(var(--index) * (100% + var(--space-1))));
+  transition: transform var(--dur-fast) cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--dur-base), transform 0.2s;
+}
+
+.item:active {
+  transform: scale(0.9);
 }
 
 .icon {

@@ -11,23 +11,16 @@ interface Props {
   pct: number;
   onEdit: () => void;
   onDelete: () => void;
-  /** Открыт ли этот блок (свайпнут) — может быть только один */
   isOpen: boolean;
-  /** Вызвать при открытии этого блока (свайп влево) */
   onRequestOpen: () => void;
-  /** Вызвать при начале касания — закрыть другой открытый блок */
   onTouchStartItem: () => void;
-  /** Вызвать при закрытии блока (свайп вправо или нажатие кнопки) */
   onClose: () => void;
 }
 
 const ACTION_WIDTH = 128;
 const SNAP_THRESHOLD = ACTION_WIDTH / 2;
-// Жёсткость «резинки» при оттягивании за пределы — чем меньше, тем туже.
 const RUBBER = 0.55;
 
-// iOS-подобное сопротивление: за границей смещение растёт всё медленнее
-// и асимптотически стремится к dimension, давая ощущение пружины.
 function rubberband(distance: number, dimension: number) {
   return (distance * dimension * RUBBER) / (dimension + RUBBER * distance);
 }
@@ -38,8 +31,6 @@ function withRubberband(pos: number, min: number, max: number) {
   return pos;
 }
 
-// Метки вход/выход не задаём — наследуем от контейнера списка (stagger)
-// и от AnimatePresence (exit).
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
@@ -57,8 +48,10 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
   const [offset, setOffset] = useState(0);
   const [animate, setAnimate] = useState(false);
   const startXRef = useRef(0);
-  const baseRef = useRef(0); // позиция покоя, зафиксированная на старте свайпа
+  const startYRef = useRef(0);
+  const baseRef = useRef(0);
   const movedRef = useRef(false);
+  const dirRef = useRef<'h' | 'v' | null>(null);
 
   const snapTo = useCallback((val: number) => {
     setAnimate(true);
@@ -68,13 +61,24 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     onTouchStartItem();
     startXRef.current = e.touches[0].clientX;
+    startYRef.current = e.touches[0].clientY;
     baseRef.current = offset;
     movedRef.current = false;
+    dirRef.current = null;
     setAnimate(false);
   }, [onTouchStartItem, offset]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     const dx = e.touches[0].clientX - startXRef.current;
+    const dy = e.touches[0].clientY - startYRef.current;
+
+    if (dirRef.current === null) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      dirRef.current = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+    }
+
+    if (dirRef.current === 'v') return;
+
     if (Math.abs(dx) > 4) movedRef.current = true;
     setOffset(withRubberband(baseRef.current + dx, -ACTION_WIDTH, 0));
   }, []);
@@ -93,8 +97,6 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
     else onClose();
   }, [offset, snapTo, onRequestOpen, onClose]);
 
-  // Родитель закрыл блок (открыли другой) — сбрасываем свайп во время рендера,
-  // чтобы не плодить эффект с setState.
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   if (prevIsOpen !== isOpen) {
     setPrevIsOpen(isOpen);
