@@ -1,0 +1,147 @@
+.page {
+  padding-top: var(--space-4);
+}
+
+.titleRow {
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  margin-bottom: var(--space-5);
+}
+
+.cardTitle {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.cardDesc {
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: var(--space-5);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.row + .row {
+  margin-top: var(--space-5);
+}
+
+.rowLabel {
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+.segmented {
+  display: flex;
+  flex: 0 0 auto;
+  width: 14rem;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.segment {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur-base), color var(--dur-base), transform var(--dur-fast);
+}
+
+.segment:active {
+  transform: scale(0.95);
+}
+
+.segmentActive {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.segmentActive svg {
+  color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--dur-base), border-color var(--dur-base), transform var(--dur-fast);
+}
+
+.action svg {
+  color: var(--accent);
+}
+
+.action:active {
+  background: var(--surface-3);
+  transform: scale(0.98);
+}
+
+.fileInput {
+  display: none;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--fs-body);
+  line-height: 1.4;
+}
+
+.statusOk {
+  color: var(--accent);
+}
+
+.statusError {
+  color: var(--danger);
+}

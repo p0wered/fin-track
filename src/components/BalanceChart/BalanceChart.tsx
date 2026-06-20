@@ -1,6 +1,7 @@
 import { useMemo, useRef, useEffect } from 'react';
 import { m } from 'motion/react';
 import { formatAmount, formatMonthLabel, formatMonthShort } from '../../types.ts';
+import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './BalanceChart.module.css';
 
 const EASE = [0.4, 0, 0.2, 1] as const;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function BalanceChart({ data }: Props) {
+  const { t, locale } = useSettings();
   const containerRef = useRef<HTMLDivElement>(null);
   const maxBalance = useMemo(
     () => (data.length ? Math.max(...data.map(([, b]) => b), 1) : 1),
@@ -38,8 +40,8 @@ export default function BalanceChart({ data }: Props) {
         transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
       >
         <div className={styles.emptyIcon}>📊</div>
-        <p>Пока нет данных по месяцам</p>
-        <p className={styles.hint}>Баланс на конец каждого месяца будет сохраняться автоматически</p>
+        <p>{t('chart.empty')}</p>
+        <p className={styles.hint}>{t('chart.emptyHint')}</p>
       </m.div>
     );
   }
@@ -59,7 +61,7 @@ export default function BalanceChart({ data }: Props) {
         className={styles.scroll}
         ref={containerRef}
         role="region"
-        aria-label="Динамика баланса по месяцам"
+        aria-label={t('dynamics.aria')}
       >
         <div
           className={styles.inner}
@@ -79,17 +81,17 @@ export default function BalanceChart({ data }: Props) {
                 <div className={styles.barRail} style={{ height: railHeight }}>
                   <div className={styles.barRailTop} style={{ height: RAIL_TOP_PADDING }} />
                   <div className={styles.barRailSpacer} />
-                  <div className={styles.barValue} title={formatAmount(balance)}>
-                    {formatAmount(balance)}
+                  <div className={styles.barValue} title={formatAmount(balance, locale)}>
+                    {formatAmount(balance, locale)}
                   </div>
                   <div
                     className={styles.bar}
                     style={{ height: barHeightPx }}
-                    aria-label={`${formatMonthLabel(monthKey)}: ${formatAmount(balance)}`}
+                    aria-label={`${formatMonthLabel(monthKey, locale)}: ${formatAmount(balance, locale)}`}
                   />
                 </div>
                 <div className={styles.barLabel}>
-                  {formatMonthShort(monthKey)}
+                  {formatMonthShort(monthKey, locale)}
                 </div>
               </m.div>
             );

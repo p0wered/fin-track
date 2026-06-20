@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { m } from 'motion/react';
 import type { FinanceSource } from '../../types.ts';
 import { formatAmount } from '../../types.ts';
+import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './DonutChart.module.css';
 
 const EASE = [0.4, 0, 0.2, 1] as const;
@@ -106,6 +107,7 @@ interface Props {
 }
 
 export default function DonutChart({ sources }: Props) {
+  const { t, locale } = useSettings();
   const total = useMemo(
     () => sources.reduce((sum, s) => sum + s.amount, 0),
     [sources],
@@ -258,8 +260,8 @@ export default function DonutChart({ sources }: Props) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.35 }}
       >
-        <span className={styles.label}>Всего</span>
-        <span className={styles.amount}>{formatAmount(animatedTotal)}</span>
+        <span className={styles.label}>{t('donut.total')}</span>
+        <span className={styles.amount}>{formatAmount(animatedTotal, locale)}</span>
       </m.div>
     </m.div>
   );

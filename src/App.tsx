@@ -5,6 +5,8 @@ import TabBar from './components/TabBar/TabBar.tsx';
 import type { TabId } from './components/TabBar/TabBar.tsx';
 import DynamicsPage from './pages/DynamicsPage/DynamicsPage.tsx';
 import MainTabContent from './pages/MainTab/MainTabContent.tsx';
+import SettingsPage from './pages/SettingsPage/SettingsPage.tsx';
+import type { BackupData } from './settings/backup.ts';
 import type { FinanceSource } from './types';
 import { getCurrentMonthKey } from './types';
 
@@ -31,7 +33,8 @@ function loadMonthlyBalances(): Record<string, number> {
 
 function App() {
   const [sources, setSources] = useState<FinanceSource[]>(loadSources);
-  const [persistedBalances] = useState<Record<string, number>>(loadMonthlyBalances);
+  const [persistedBalances, setPersistedBalances] =
+    useState<Record<string, number>>(loadMonthlyBalances);
   const [activeTab, setActiveTab] = useState<TabId>('main');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<FinanceSource | null>(null);
@@ -65,6 +68,11 @@ function App() {
   }, []);
 
   const closeModal = useCallback(() => setModalOpen(false), []);
+
+  const handleImport = useCallback((data: BackupData) => {
+    setSources(data.sources);
+    setPersistedBalances(data.monthlyBalances);
+  }, []);
 
   const handleDelete = useCallback((id: string) => {
     setSources(prev => prev.filter(s => s.id !== id));
@@ -104,6 +112,13 @@ function App() {
 
             {activeTab === 'dynamics' && (
               <DynamicsPage monthlyBalances={monthlyBalances} />
+            )}
+
+            {activeTab === 'settings' && (
+              <SettingsPage
+                data={{ sources, monthlyBalances }}
+                onImport={handleImport}
+              />
             )}
           </div>
 

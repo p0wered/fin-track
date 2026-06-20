@@ -102,7 +102,7 @@
 }
 
 .colorOption.selected {
-  border-color: #fff;
+  border-color: var(--text);
   transform: scale(1.15);
 }
 

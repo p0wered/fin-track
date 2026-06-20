@@ -16,19 +16,19 @@ export function getCurrentMonthKey(): string {
 }
 
 /** Форматирование месяца для подписи (например "янв. 2025") */
-export function formatMonthLabel(monthKey: string): string {
+export function formatMonthLabel(monthKey: string, locale = 'ru-RU'): string {
   const [y, m] = monthKey.split('-').map(Number);
   const date = new Date(y, m - 1, 1);
-  return date.toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' });
+  return date.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
 }
 
 /** Три буквы месяца без точки (для подписи под столбцом) */
-export function formatMonthShort(monthKey: string): string {
+export function formatMonthShort(monthKey: string, locale = 'ru-RU'): string {
   const [, m] = monthKey.split('-').map(Number);
   const date = new Date(2000, m - 1, 1);
-  return date.toLocaleDateString('ru-RU', { month: 'short' }).replace(/\.$/, '').slice(0, 3);
+  return date.toLocaleDateString(locale, { month: 'short' }).replace(/\.$/, '').slice(0, 3);
 }
 
-export function formatAmount(amount: number): string {
-  return new Intl.NumberFormat('ru-RU').format(Math.round(amount)) + ' \u20BD';
+export function formatAmount(amount: number, locale = 'ru-RU'): string {
+  return new Intl.NumberFormat(locale).format(Math.round(amount)) + ' \u20BD';
 }

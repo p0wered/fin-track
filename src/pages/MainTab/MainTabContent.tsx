@@ -3,6 +3,7 @@ import { m, AnimatePresence } from 'motion/react';
 import type { Variants } from 'motion/react';
 import DonutChart from '../../components/DonutChart/DonutChart.tsx';
 import SourceItem from '../../components/SourceItem/SourceItem.tsx';
+import { useSettings } from '../../settings/SettingsContext.tsx';
 import type { FinanceSource } from '../../types.ts';
 import styles from './MainTabContent.module.css';
 
@@ -23,6 +24,7 @@ const listVariants: Variants = {
 };
 
 export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd }: Props) {
+  const { t } = useSettings();
   const [openSourceId, setOpenSourceId] = useState<string | null>(null);
 
   const sortedSources = useMemo(
@@ -50,7 +52,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
         >
-          <h2 className={styles.sectionTitle}>Источники</h2>
+          <h2 className={styles.sectionTitle}>{t('sources.title')}</h2>
           {count > 0 && (
             <m.span
               className={styles.sectionCount}
@@ -72,7 +74,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
             transition={{ duration: 0.5, ease: EASE, delay: 0.25 }}
           >
             <div className={styles.emptyIcon}>💰</div>
-            <p>Добавьте свой первый источник</p>
+            <p>{t('sources.empty')}</p>
           </m.div>
         ) : (
           <m.div variants={listVariants} initial="hidden" animate="visible">
@@ -102,7 +104,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
           onClick={onAdd}
         >
           <span className={styles.addIcon}>+</span>
-          Добавить источник
+          {t('sources.add')}
         </m.button>
       </section>
     </>

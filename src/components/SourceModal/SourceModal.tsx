@@ -3,6 +3,7 @@ import { m } from 'motion/react';
 import type { Variants } from 'motion/react';
 import type { FinanceSource } from '../../types.ts';
 import { PALETTE } from '../../theme/colors.ts';
+import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './SourceModal.module.css';
 
 interface SavePayload {
@@ -35,6 +36,7 @@ const childVariants: Variants = {
 };
 
 export default function SourceModal({ source, onSave, onClose }: Props) {
+  const { t } = useSettings();
   const [name, setName] = useState(source?.name ?? '');
   const [amount, setAmount] = useState(source ? String(source.amount) : '');
   const [color, setColor] = useState(source?.color ?? PALETTE[0]);
@@ -83,7 +85,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
       >
         <m.div className={styles.header} variants={childVariants}>
           <h3 className={styles.title}>
-            {source ? 'Редактировать' : 'Новый источник'}
+            {source ? t('modal.editTitle') : t('modal.newTitle')}
           </h3>
           <button className={styles.close} onClick={onClose}>
             &#10005;
@@ -91,18 +93,18 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
         </m.div>
 
         <m.div className={styles.formGroup} variants={childVariants}>
-          <label className={styles.label}>Название</label>
+          <label className={styles.label}>{t('modal.name')}</label>
           <input
             className={styles.input}
             type="text"
-            placeholder="Например, Сбербанк"
+            placeholder={t('modal.namePlaceholder')}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </m.div>
 
         <m.div className={styles.formGroup} variants={childVariants}>
-          <label className={styles.label}>{'Сумма (₽)'}</label>
+          <label className={styles.label}>{t('modal.amount')}</label>
           <input
             className={styles.input}
             type="text"
@@ -117,7 +119,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
         </m.div>
 
         <m.div className={styles.formGroup} variants={childVariants}>
-          <label className={styles.label}>Цвет</label>
+          <label className={styles.label}>{t('modal.color')}</label>
           <div className={styles.colorPicker}>
             {PALETTE.map((c) => (
               <button
@@ -137,7 +139,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
           onClick={handleSave}
           disabled={!isValid}
         >
-          {source ? 'Сохранить' : 'Добавить'}
+          {source ? t('modal.save') : t('modal.add')}
         </m.button>
       </m.div>
     </m.div>

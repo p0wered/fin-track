@@ -1,7 +1,8 @@
-:root {
+:root,
+:root[data-theme='dark'] {
   --bg: #000000;
   --surface: #141414;
-  --surface-2: #141414; /* инпуты/вложенные поверхности — намеренно совпадает с surface */
+  --surface-2: #141414;
   --surface-3: #2a2a2a;
   --text: #ebebeb;
   --text-secondary: #888888;
@@ -12,6 +13,29 @@
   --shadow-sheet: 0 18px 45px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.02);
   --ring-accent: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
 
+  --tabbar-bg: rgba(255, 255, 255, 0.07);
+  --tabbar-border: rgba(255, 255, 255, 0.04);
+}
+
+:root[data-theme='light'] {
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --surface-2: #f4f4f6;
+  --surface-3: #e6e6eb;
+  --text: #1c1c1e;
+  --text-secondary: #8a8a8e;
+  --border: #e2e2e7;
+
+  --overlay: rgba(0, 0, 0, 0.4);
+  --overlay-blur: 4px;
+  --shadow-sheet: 0 18px 45px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --ring-accent: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+
+  --tabbar-bg: rgba(255, 255, 255, 0.72);
+  --tabbar-border: rgba(0, 0, 0, 0.06);
+}
+
+:root {
   --space-1: 4px;
   --space-2: 6px;
   --space-3: 8px;
@@ -77,7 +101,8 @@
 
 html {
   background: var(--bg);
-  color-scheme: dark;
+  /* color-scheme задаётся динамически в applyTheme() по выбранной теме */
+  transition: background var(--dur-base);
 }
 
 body {
@@ -112,7 +137,7 @@ textarea {
 
 .app-content {
   flex: 1;
-  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  padding-bottom: calc(104px + env(safe-area-inset-bottom));
 }
 
 @media (prefers-reduced-motion: reduce) {

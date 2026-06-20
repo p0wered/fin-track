@@ -3,6 +3,7 @@ import { m } from 'motion/react';
 import type { Variants } from 'motion/react';
 import type { FinanceSource } from '../../types.ts';
 import { formatAmount } from '../../types.ts';
+import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './SourceItem.module.css';
 
 interface Props {
@@ -38,6 +39,7 @@ const itemVariants: Variants = {
 };
 
 export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
+  const { t, locale } = useSettings();
   const [offset, setOffset] = useState(0);
   const [animate, setAnimate] = useState(false);
   const startXRef = useRef(0);
@@ -98,7 +100,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
             onClose();
             onEdit();
           }}
-          aria-label="Редактировать"
+          aria-label={t('item.edit')}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -112,7 +114,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
             onClose();
             onDelete();
           }}
-          aria-label="Удалить"
+          aria-label={t('item.delete')}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18" />
@@ -136,7 +138,7 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
           <span className={styles.name}>{source.name}</span>
           <span className={styles.pct}>{pct.toFixed(1)}%</span>
         </div>
-        <span className={styles.amount}>{formatAmount(source.amount)}</span>
+        <span className={styles.amount}>{formatAmount(source.amount, locale)}</span>
       </div>
     </m.div>
   );
