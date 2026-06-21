@@ -16,3 +16,14 @@ createRoot(document.getElementById('root')!).render(
     </SettingsProvider>
   </StrictMode>,
 )
+
+// Убираем прелоадер первичной загрузки после первого кадра отрисовки React.
+const loader = document.getElementById('app-loader')
+if (loader) {
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      loader.classList.add('is-hidden')
+      loader.addEventListener('transitionend', () => loader.remove(), { once: true })
+    }),
+  )
+}
