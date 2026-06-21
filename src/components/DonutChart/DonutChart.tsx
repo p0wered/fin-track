@@ -113,6 +113,12 @@ export default function DonutChart({ sources }: Props) {
     [sources],
   );
 
+  // Сегменты раскладываются по кругу по возрастанию размера.
+  const orderedSources = useMemo(
+    () => [...sources].sort((a, b) => a.amount - b.amount),
+    [sources],
+  );
+
   const animatedTotal = useAnimatedNumber(total);
 
   const segsRef = useRef<AnimSeg[]>([]);
@@ -124,7 +130,7 @@ export default function DonutChart({ sources }: Props) {
   useEffect(() => {
     const targets: DisplaySeg[] = [];
     if (total > 0) {
-      for (const s of sources) {
+      for (const s of orderedSources) {
         if (s.amount > 0) {
           targets.push({ id: s.id, color: s.color, fraction: s.amount / total });
         }
@@ -198,7 +204,7 @@ export default function DonutChart({ sources }: Props) {
 
     frameRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameRef.current);
-  }, [sources, total]);
+  }, [orderedSources, total]);
 
   const svgContent = useMemo(() => {
     if (displaySegs.length === 0) return null;
