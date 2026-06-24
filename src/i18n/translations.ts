@@ -33,6 +33,7 @@ export const translations = {
     'modal.namePlaceholder': 'Например, Сбербанк',
     'modal.amount': 'Сумма (₽)',
     'modal.color': 'Цвет',
+    'modal.customColor': 'Свой цвет',
     'modal.save': 'Сохранить',
     'modal.add': 'Добавить',
 
@@ -75,6 +76,7 @@ export const translations = {
     'modal.namePlaceholder': 'e.g. Bank of America',
     'modal.amount': 'Amount (₽)',
     'modal.color': 'Color',
+    'modal.customColor': 'Custom color',
     'modal.save': 'Save',
     'modal.add': 'Add',
 

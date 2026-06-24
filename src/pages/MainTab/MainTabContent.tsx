@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { m, AnimatePresence } from 'motion/react';
-import type { Variants } from 'motion/react';
 import DonutChart from '../../components/DonutChart/DonutChart.tsx';
 import SourceItem from '../../components/SourceItem/SourceItem.tsx';
 import { useSettings } from '../../settings/SettingsContext.tsx';
@@ -16,12 +15,6 @@ interface Props {
 }
 
 const EASE = [0.4, 0, 0.2, 1] as const;
-
-/** Контейнер списка: каскадный вход дочерних элементов при первом монтировании. */
-const listVariants: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.25 } },
-};
 
 export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd }: Props) {
   const { t } = useSettings();
@@ -77,12 +70,13 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
             <p>{t('sources.empty')}</p>
           </m.div>
         ) : (
-          <m.div variants={listVariants} initial="hidden" animate="visible">
+          <div>
             <AnimatePresence>
-              {sortedSources.map(src => (
+              {sortedSources.map((src, index) => (
                 <SourceItem
                   key={src.id}
                   source={src}
+                  index={index}
                   pct={total > 0 ? (src.amount / total) * 100 : 0}
                   onEdit={() => onEdit(src)}
                   onDelete={() => onDelete(src.id)}
@@ -93,7 +87,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
                 />
               ))}
             </AnimatePresence>
-          </m.div>
+          </div>
         )}
 
         <m.button

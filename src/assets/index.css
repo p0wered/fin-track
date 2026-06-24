@@ -75,7 +75,8 @@
 .app {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) var(--space-7);
+  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-5)
+    var(--space-7);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -129,7 +130,8 @@ textarea {
 .app {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) var(--space-7);
+  padding: calc(var(--space-6) + env(safe-area-inset-top)) var(--space-5)
+    var(--space-7);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;

@@ -9,6 +9,7 @@ import styles from './SourceItem.module.css';
 interface Props {
   source: FinanceSource;
   pct: number;
+  index: number;
   onEdit: () => void;
   onDelete: () => void;
   isOpen: boolean;
@@ -33,7 +34,11 @@ function withRubberband(pos: number, min: number, max: number) {
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1], delay: Math.min(i, 6) * 0.06 },
+  }),
   exit: {
     opacity: 0,
     x: -30,
@@ -43,7 +48,7 @@ const itemVariants: Variants = {
   },
 };
 
-export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
+export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
   const { t, locale } = useSettings();
   const [offset, setOffset] = useState(0);
   const [animate, setAnimate] = useState(false);
@@ -107,7 +112,14 @@ export default function SourceItem({ source, pct, onEdit, onDelete, isOpen, onRe
   }
 
   return (
-    <m.div className={styles.wrapper} variants={itemVariants}>
+    <m.div
+      className={styles.wrapper}
+      variants={itemVariants}
+      custom={index}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <div className={styles.actions}>
         <button
           className={`${styles.actionBtn} ${styles.editBtn}`}

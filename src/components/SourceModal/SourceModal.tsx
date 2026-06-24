@@ -35,6 +35,21 @@ const childVariants: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: EASE } },
 };
 
+const colorPickerVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.045, delayChildren: 0.05 } },
+};
+
+const colorSwatchVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.2, y: 6 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 520, damping: 24 },
+  },
+};
+
 export default function SourceModal({ source, onSave, onClose }: Props) {
   const { t } = useSettings();
   const [name, setName] = useState(source?.name ?? '');
@@ -50,6 +65,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
 
   const parsedAmount = Number(amount);
   const isValid = name.trim().length > 0 && amount.length > 0 && !isNaN(parsedAmount) && parsedAmount >= 0;
+  const isCustomColor = !PALETTE.includes(color as (typeof PALETTE)[number]);
 
   const handleSave = () => {
     if (!isValid) return;
@@ -120,17 +136,35 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
 
         <m.div className={styles.formGroup} variants={childVariants}>
           <label className={styles.label}>{t('modal.color')}</label>
-          <div className={styles.colorPicker}>
+          <m.div className={styles.colorPicker} variants={colorPickerVariants}>
             {PALETTE.map((c) => (
-              <button
+              <m.button
                 key={c}
+                type="button"
+                variants={colorSwatchVariants}
+                whileTap={{ scale: 0.85 }}
                 className={`${styles.colorOption} ${c === color ? styles.selected : ''}`}
                 style={{ background: c }}
                 onClick={() => setColor(c)}
                 aria-label={c}
               />
             ))}
-          </div>
+            <m.label
+              variants={colorSwatchVariants}
+              whileTap={{ scale: 0.85 }}
+              className={`${styles.colorOption} ${styles.customColor} ${isCustomColor ? styles.selected : ''}`}
+              style={isCustomColor ? { background: color } : undefined}
+              aria-label={t('modal.customColor')}
+            >
+              {!isCustomColor && <span className={styles.customIcon}>+</span>}
+              <input
+                type="color"
+                className={styles.colorInput}
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+              />
+            </m.label>
+          </m.div>
         </m.div>
 
         <m.button
