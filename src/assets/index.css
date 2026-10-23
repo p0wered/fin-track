@@ -34,6 +34,11 @@
   --sheet-stroke: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 40%, rgba(255, 255, 255, 0.02));
   --shadow-sheet: 0 -16px 48px rgba(0, 0, 0, 0.6);
   --separator: rgba(255, 255, 255, 0.08);
+  --bar-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  --bar-rim: inset 0 1px 0.5px rgba(255, 255, 255, 0.14);
+  /* Сегментированный контрол — плоский, как в iOS; приглушён под стекло групп. */
+  --seg-track: rgba(255, 255, 255, 0.06);
+  --seg-thumb: rgba(255, 255, 255, 0.12);
   --grabber: rgba(255, 255, 255, 0.24);
   --text-disabled: rgba(255, 255, 255, 0.3);
   --ring-accent: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
@@ -63,6 +68,10 @@
   --sheet-stroke: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.06) 40%, rgba(0, 0, 0, 0.04));
   --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.12);
   --separator: rgba(60, 60, 67, 0.14);
+  --bar-fill: linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.05));
+  --bar-rim: inset 0 1px 0.5px rgba(255, 255, 255, 0.6);
+  --seg-track: rgba(118, 118, 128, 0.12);
+  --seg-thumb: #ffffff;
   --grabber: rgba(60, 60, 67, 0.3);
   --text-disabled: rgba(60, 60, 67, 0.3);
   --ring-accent: 0 0 0 3px rgba(var(--accent-rgb), 0.15);

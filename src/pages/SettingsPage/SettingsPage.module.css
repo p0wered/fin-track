@@ -2,130 +2,126 @@
   padding-top: var(--space-4);
 }
 
-.titleRow {
-  padding: 0 var(--space-3);
-  margin-bottom: var(--space-6);
-}
-
 .title {
-  font-size: var(--fs-lg);
-  font-weight: 600;
+  font-size: var(--fs-display);
+  font-weight: 400;
+  padding: 0 var(--space-1);
+  margin-bottom: var(--space-7);
 }
 
-.card {
-  background: var(--surface);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-6);
-  margin-bottom: var(--space-5);
+.section {
+  margin-bottom: var(--space-7);
 }
 
-.cardTitle {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-5);
+.sectionTitle {
+  font-size: var(--fs-base);
+  font-weight: 400;
+  padding: 0 var(--space-1);
+  margin-bottom: var(--space-4);
 }
 
-.cardDesc {
-  font-size: var(--fs-body);
-  color: var(--text-secondary);
-  line-height: 1.45;
-  margin-bottom: var(--space-5);
+/* Сгруппированный список — тот же, что в шторке источника. */
+.group {
+  border-radius: var(--radius-group);
+  overflow: hidden;
 }
 
 .row {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
 }
 
-.row + .row {
-  margin-top: var(--space-3);
+.row + .row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--space-5);
+  right: 0;
+  height: 0.5px;
+  background: var(--separator);
+}
+
+.rowLabel {
+  font-size: var(--fs-base);
 }
 
 .segmented {
   position: relative;
-  display: flex;
-  width: 100%;
-  padding: var(--space-1);
-  background: var(--bg);
-  border-radius: var(--radius-lg);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  flex-shrink: 0;
+  padding: 2px;
+  background: var(--seg-track);
+  border-radius: var(--radius-pill);
 }
 
 .thumb {
   position: absolute;
-  top: var(--space-1);
-  left: var(--space-1);
-  width: calc((100% - 2 * var(--space-1)) / var(--count));
-  bottom: var(--space-1);
-  background: var(--surface-3);
-  border-radius: var(--radius-md);
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc((100% - 4px) / var(--count));
+  background: var(--seg-thumb);
+  border-radius: var(--radius-pill);
   transform: translateX(calc(var(--index) * 100%));
-  transition: transform var(--dur-fast) cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 0.3s var(--ease-out);
 }
 
 .segment {
   position: relative;
   z-index: 1;
   display: inline-flex;
-  flex: 1;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3);
-  padding: 10px var(--space-4);
+  gap: var(--space-2);
+  height: 32px;
+  padding: 0 var(--space-4);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--text-secondary);
-  font-size: var(--fs-base);
-  font-weight: 400;
+  color: var(--text);
+  font-size: var(--fs-sm);
   cursor: pointer;
   white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
   transition: color var(--dur-base);
 }
 
-.segmentActive {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.segmentActive svg {
-  color: var(--accent);
-}
-
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
 
 .action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: 14px;
+  justify-content: flex-start;
   border: none;
-  border-radius: var(--radius-md);
-  background: var(--surface-3);
+  background: transparent;
   color: var(--text);
   font-size: var(--fs-base);
-  font-weight: 600;
+  text-align: left;
   cursor: pointer;
-  transition: background var(--dur-base), transform var(--dur-fast);
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--dur-fast);
 }
 
 .action svg {
+  flex-shrink: 0;
   color: var(--accent);
 }
 
 .action:active {
-  background: var(--border);
-  transform: scale(0.98);
+  background: var(--glass-fill-pressed);
+}
+
+.footer {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  line-height: 1.4;
+  padding: 0 var(--space-5);
+  margin-top: var(--space-3);
 }
 
 .fileInput {
@@ -137,12 +133,13 @@
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-4);
-  font-size: var(--fs-body);
+  padding: 0 var(--space-5);
+  font-size: var(--fs-sm);
   line-height: 1.4;
 }
 
 .statusOk {
-  color: var(--accent);
+  color: var(--success);
 }
 
 .statusError {

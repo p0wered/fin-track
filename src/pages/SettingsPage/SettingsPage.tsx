@@ -53,85 +53,88 @@ export default function SettingsPage({ data, onImport }: Props) {
 
   return (
     <div className={styles.page}>
-      <m.div
-        className={styles.titleRow}
+      <m.h1
+        className={styles.title}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
       >
-        <h1 className={styles.title}>{t('settings.title')}</h1>
-      </m.div>
+        {t('settings.title')}
+      </m.h1>
 
       <m.section
-        className={styles.card}
+        className={styles.section}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.12 }}
       >
-        <h2 className={styles.cardTitle}>{t('settings.appearance')}</h2>
-
-        <div className={styles.row}>
-          <div className={styles.segmented} role="group" aria-label={t('settings.theme')}>
-            <span
-              className={styles.thumb}
-              style={{ '--count': THEME_OPTIONS.length, '--index': themeIndex } as React.CSSProperties}
-              aria-hidden
-            />
-            {THEME_OPTIONS.map(({ id, labelKey, Icon }) => (
-              <button
-                key={id}
-                type="button"
-                className={`${styles.segment} ${theme === id ? styles.segmentActive : ''}`}
-                aria-pressed={theme === id}
-                onClick={() => setTheme(id)}
-              >
-                <Icon size={18} strokeWidth={1.8} aria-hidden />
-                {t(labelKey)}
-              </button>
-            ))}
+        <h2 className={styles.sectionTitle}>{t('settings.appearance')}</h2>
+        <div className={`${styles.group} glass`}>
+          <div className={styles.row}>
+            <span className={styles.rowLabel}>{t('settings.theme')}</span>
+            <div className={styles.segmented} role="group" aria-label={t('settings.theme')}>
+              <span
+                className={styles.thumb}
+                style={{ '--count': THEME_OPTIONS.length, '--index': themeIndex } as React.CSSProperties}
+                aria-hidden
+              />
+              {THEME_OPTIONS.map(({ id, labelKey, Icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={styles.segment}
+                  aria-pressed={theme === id}
+                  onClick={() => setTheme(id)}
+                >
+                  <Icon size={16} strokeWidth={1.8} aria-hidden />
+                  {t(labelKey)}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className={styles.row}>
-          <div className={styles.segmented} role="group" aria-label={t('settings.language')}>
-            <span
-              className={styles.thumb}
-              style={{ '--count': LANGS.length, '--index': langIndex } as React.CSSProperties}
-              aria-hidden
-            />
-            {LANGS.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                className={`${styles.segment} ${lang === id ? styles.segmentActive : ''}`}
-                aria-pressed={lang === id}
-                onClick={() => setLang(id as Lang)}
-              >
-                {label}
-              </button>
-            ))}
+          <div className={styles.row}>
+            <span className={styles.rowLabel}>{t('settings.language')}</span>
+            <div className={styles.segmented} role="group" aria-label={t('settings.language')}>
+              <span
+                className={styles.thumb}
+                style={{ '--count': LANGS.length, '--index': langIndex } as React.CSSProperties}
+                aria-hidden
+              />
+              {LANGS.map(({ id, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={styles.segment}
+                  aria-pressed={lang === id}
+                  onClick={() => setLang(id as Lang)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </m.section>
 
       <m.section
-        className={styles.card}
+        className={styles.section}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.19 }}
       >
-        <h2 className={styles.cardTitle}>{t('settings.data')}</h2>
-
-        <div className={styles.actions}>
-          <button type="button" className={styles.action} onClick={handleExport}>
-            <Download size={18} strokeWidth={1.8} aria-hidden />
+        <h2 className={styles.sectionTitle}>{t('settings.data')}</h2>
+        <div className={`${styles.group} glass`}>
+          <button type="button" className={`${styles.row} ${styles.action}`} onClick={handleExport}>
+            <Download size={20} strokeWidth={1.8} aria-hidden />
             {t('settings.export')}
           </button>
-          <button type="button" className={styles.action} onClick={handleImportClick}>
-            <Upload size={18} strokeWidth={1.8} aria-hidden />
+          <button type="button" className={`${styles.row} ${styles.action}`} onClick={handleImportClick}>
+            <Upload size={20} strokeWidth={1.8} aria-hidden />
             {t('settings.import')}
           </button>
         </div>
+        <p className={styles.footer}>{t('settings.dataDesc')}</p>
 
         <input
           ref={fileRef}

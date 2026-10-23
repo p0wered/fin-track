@@ -2,29 +2,25 @@
   padding-top: var(--space-4);
 }
 
-.section {
-  margin-bottom: var(--space-4);
-  padding: 0 var(--space-3);
-}
-
-.titleRow {
+.sectionHeader {
   display: flex;
-  align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-1);
 }
 
-.title {
-  font-size: var(--fs-lg);
-  font-weight: 600;
+.sectionTitle {
+  font-size: var(--fs-base);
+  font-weight: 400;
 }
 
 .year {
-  font-size: var(--fs-base);
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.chartSection {
-  margin-bottom: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-sm);
+  line-height: 1;
+  border-radius: var(--radius-pill);
 }

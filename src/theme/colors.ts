@@ -20,6 +20,7 @@ export const PALETTE = [
 const ACCENT = PALETTE[7];
 const ACCENT_HOVER = { dark: '#0080E6', light: '#0077E0' };
 const DANGER = PALETTE[0];
+const SUCCESS = PALETTE[3];
 
 const LIGHT_BY_DARK = new Map<string, string>(
   PALETTE.map((c) => [c.dark.toLowerCase(), c.light]),
@@ -47,4 +48,5 @@ export function applyThemeColors(theme: Theme, root: HTMLElement = document.docu
   root.style.setProperty('--accent-rgb', hexToRgb(ACCENT[theme]));
   root.style.setProperty('--danger', DANGER[theme]);
   root.style.setProperty('--danger-rgb', hexToRgb(DANGER[theme]));
+  root.style.setProperty('--success', SUCCESS[theme]);
 }

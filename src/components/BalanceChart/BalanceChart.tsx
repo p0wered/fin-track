@@ -1,5 +1,6 @@
 import { useMemo, useRef, useEffect } from 'react';
 import { m } from 'motion/react';
+import { ChartColumn } from 'lucide-react';
 import { formatAmount, formatMonthLabel, formatMonthShort } from '../../types.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './BalanceChart.module.css';
@@ -34,12 +35,14 @@ export default function BalanceChart({ data }: Props) {
   if (sorted.length === 0) {
     return (
       <m.div
-        className={styles.empty}
+        className={`${styles.empty} glass`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
       >
-        <div className={styles.emptyIcon}>📊</div>
+        <div className={`${styles.emptyIcon} glass`}>
+          <ChartColumn size={26} strokeWidth={1.75} aria-hidden />
+        </div>
         <p>{t('chart.empty')}</p>
         <p className={styles.hint}>{t('chart.emptyHint')}</p>
       </m.div>
@@ -52,7 +55,7 @@ export default function BalanceChart({ data }: Props) {
 
   return (
     <m.div
-      className={styles.wrap}
+      className={`${styles.wrap} glass`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
@@ -70,10 +73,12 @@ export default function BalanceChart({ data }: Props) {
           {sorted.map(([monthKey, balance], i) => {
             const heightPct = maxBalance > 0 ? (balance / maxBalance) * 100 : 0;
             const barHeightPx = (BAR_AREA_HEIGHT * heightPct) / 100;
+            // Последний месяц — текущий, он выделен акцентом.
+            const isLatest = i === sorted.length - 1;
             return (
               <m.div
                 key={monthKey}
-                className={styles.barCell}
+                className={`${styles.barCell} ${isLatest ? styles.latest : ''}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, ease: EASE, delay: 0.1 + i * 0.04 }}
