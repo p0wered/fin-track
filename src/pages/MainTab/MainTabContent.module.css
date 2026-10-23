@@ -1,8 +1,25 @@
-.donutSection {
+.hero {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding-top: var(--space-4);
+  gap: var(--space-1);
+  min-height: 248px;
   margin-bottom: var(--space-8);
+  text-align: center;
+}
+
+.heroLabel {
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+
+.heroAmount {
+  font-size: var(--fs-hero);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .sourcesSection {
@@ -14,21 +31,33 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-4);
-  padding: 0 var(--space-2);
+  padding: 0 var(--space-1);
 }
 
 .sectionTitle {
-  font-size: var(--fs-lg);
-  font-weight: 600;
+  font-size: var(--fs-base);
+  font-weight: 400;
 }
 
 .sectionCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 24px;
+  padding: 0 var(--space-3);
   font-size: var(--fs-sm);
   line-height: 1;
-  color: var(--text-secondary);
-  background: var(--surface-2);
-  padding: 3px 12px 4px;
-  border-radius: var(--radius-sm);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+}
+
+/* Карточки шире контента на 8px с каждой стороны; клип по краю экрана,
+   чтобы кнопки свайпа не торчали справа в закрытом состоянии. */
+.list {
+  margin-inline: calc(-1 * var(--space-5));
+  padding-inline: var(--space-3);
+  overflow-x: clip;
 }
 
 .emptyState {
@@ -46,33 +75,4 @@
   font-size: 2.5rem;
   opacity: 0.4;
   animation: float 3s ease-in-out infinite;
-}
-
-.addBtn {
-  width: 100%;
-  padding: var(--space-5);
-  margin-top: var(--space-1);
-  border: 2px dashed var(--border);
-  border-radius: var(--radius-lg);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: var(--fs-md);
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  transition: border-color var(--dur-base), color var(--dur-base), transform 0.2s;
-}
-
-.addBtn:active {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: scale(0.97);
-}
-
-.addIcon {
-  font-size: 1.3rem;
-  line-height: 1;
 }

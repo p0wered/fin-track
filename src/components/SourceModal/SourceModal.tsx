@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { m } from 'motion/react';
 import type { Variants } from 'motion/react';
 import type { FinanceSource } from '../../types.ts';
-import { PALETTE } from '../../theme/colors.ts';
+import { PALETTE, isPaletteColor } from '../../theme/colors.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './SourceModal.module.css';
 
@@ -51,10 +51,10 @@ const colorSwatchVariants: Variants = {
 };
 
 export default function SourceModal({ source, onSave, onClose }: Props) {
-  const { t } = useSettings();
+  const { t, theme } = useSettings();
   const [name, setName] = useState(source?.name ?? '');
   const [amount, setAmount] = useState(source ? String(source.amount) : '');
-  const [color, setColor] = useState(source?.color ?? PALETTE[0]);
+  const [color, setColor] = useState<string>(source?.color ?? PALETTE[0].dark);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -65,7 +65,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
 
   const parsedAmount = Number(amount);
   const isValid = name.trim().length > 0 && amount.length > 0 && !isNaN(parsedAmount) && parsedAmount >= 0;
-  const isCustomColor = !PALETTE.includes(color as (typeof PALETTE)[number]);
+  const isCustomColor = !isPaletteColor(color);
 
   const handleSave = () => {
     if (!isValid) return;
@@ -139,14 +139,14 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
           <m.div className={styles.colorPicker} variants={colorPickerVariants}>
             {PALETTE.map((c) => (
               <m.button
-                key={c}
+                key={c.dark}
                 type="button"
                 variants={colorSwatchVariants}
                 whileTap={{ scale: 0.85 }}
-                className={`${styles.colorOption} ${c === color ? styles.selected : ''}`}
-                style={{ background: c }}
-                onClick={() => setColor(c)}
-                aria-label={c}
+                className={`${styles.colorOption} ${c.dark.toLowerCase() === color.toLowerCase() ? styles.selected : ''}`}
+                style={{ background: c[theme] }}
+                onClick={() => setColor(c.dark)}
+                aria-label={c.dark}
               />
             ))}
             <m.label

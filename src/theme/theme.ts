@@ -1,3 +1,5 @@
+import { applyThemeColors } from './colors.ts';
+
 export type Theme = 'dark' | 'light';
 
 const THEME_KEY = 'fin-track-theme';
@@ -27,4 +29,5 @@ export function saveTheme(theme: Theme): void {
 export function applyTheme(theme: Theme, root: HTMLElement = document.documentElement): void {
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
+  applyThemeColors(theme, root);
 }

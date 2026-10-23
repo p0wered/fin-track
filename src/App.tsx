@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LazyMotion, domAnimation, MotionConfig, AnimatePresence } from 'motion/react';
+import AddButton from './components/AddButton/AddButton.tsx';
 import SourceModal from './components/SourceModal/SourceModal.tsx';
 import TabBar from './components/TabBar/TabBar.tsx';
 import type { TabId } from './components/TabBar/TabBar.tsx';
@@ -57,7 +58,9 @@ function App() {
     localStorage.setItem(MONTHLY_BALANCE_KEY, JSON.stringify(monthlyBalances));
   }, [monthlyBalances]);
 
+  // С любого экрана «+» возвращает на главный, где будет виден новый источник.
   const openAdd = useCallback(() => {
+    setActiveTab('main');
     setEditing(null);
     setModalOpen(true);
   }, []);
@@ -106,7 +109,6 @@ function App() {
                 total={total}
                 onEdit={openEdit}
                 onDelete={handleDelete}
-                onAdd={openAdd}
               />
             )}
 
@@ -122,7 +124,11 @@ function App() {
             )}
           </div>
 
-          <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+          <div className="bottom-fade" aria-hidden />
+          <div className="dock">
+            <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+            <AddButton onClick={openAdd} />
+          </div>
 
           <AnimatePresence onExitComplete={() => setEditing(null)}>
             {modalOpen && (

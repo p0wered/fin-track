@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { m, AnimatePresence } from 'motion/react';
-import DonutChart from '../../components/DonutChart/DonutChart.tsx';
 import SourceItem from '../../components/SourceItem/SourceItem.tsx';
+import { useAnimatedNumber } from '../../hooks/useAnimatedNumber.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
 import type { FinanceSource } from '../../types.ts';
+import { formatAmount } from '../../types.ts';
 import styles from './MainTabContent.module.css';
 
 interface Props {
@@ -11,13 +12,13 @@ interface Props {
   total: number;
   onEdit: (src: FinanceSource) => void;
   onDelete: (id: string) => void;
-  onAdd: () => void;
 }
 
 const EASE = [0.4, 0, 0.2, 1] as const;
 
-export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd }: Props) {
-  const { t } = useSettings();
+export default function MainTabContent({ sources, total, onEdit, onDelete }: Props) {
+  const { t, locale } = useSettings();
+  const animatedTotal = useAnimatedNumber(total);
   const [openSourceId, setOpenSourceId] = useState<string | null>(null);
 
   const sortedSources = useMemo(
@@ -30,12 +31,13 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
   return (
     <>
       <m.section
-        className={styles.donutSection}
+        className={styles.hero}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
       >
-        <DonutChart sources={sources} />
+        <span className={styles.heroLabel}>{t('donut.total')}</span>
+        <span className={styles.heroAmount}>{formatAmount(animatedTotal, locale)}</span>
       </m.section>
 
       <section className={styles.sourcesSection}>
@@ -48,7 +50,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
           <h2 className={styles.sectionTitle}>{t('sources.title')}</h2>
           {count > 0 && (
             <m.span
-              className={styles.sectionCount}
+              className={`${styles.sectionCount} glass`}
               key={count}
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -70,7 +72,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
             <p>{t('sources.empty')}</p>
           </m.div>
         ) : (
-          <div>
+          <div className={styles.list}>
             <AnimatePresence>
               {sortedSources.map((src, index) => (
                 <SourceItem
@@ -90,16 +92,6 @@ export default function MainTabContent({ sources, total, onEdit, onDelete, onAdd
           </div>
         )}
 
-        <m.button
-          className={styles.addBtn}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE, delay: 0.25 + sources.length * 0.06 }}
-          onClick={onAdd}
-        >
-          <span className={styles.addIcon}>+</span>
-          {t('sources.add')}
-        </m.button>
       </section>
     </>
   );
