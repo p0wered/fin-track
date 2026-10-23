@@ -5,15 +5,17 @@ import styles from './AddButton.module.css';
 
 interface Props {
   onClick: () => void;
+  /** Пока открыта шторка добавления, кнопка гаснет до цвета таб-бара. */
+  muted?: boolean;
 }
 
-export default function AddButton({ onClick }: Props) {
+export default function AddButton({ onClick, muted = false }: Props) {
   const { t } = useSettings();
 
   return (
     <m.button
       type="button"
-      className={styles.button}
+      className={`${styles.button} ${muted ? styles.muted : ''}`}
       onClick={onClick}
       aria-label={t('sources.add')}
       title={t('sources.add')}

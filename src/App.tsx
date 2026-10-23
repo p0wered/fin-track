@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { LazyMotion, domAnimation, MotionConfig, AnimatePresence } from 'motion/react';
+import { LazyMotion, domMax, MotionConfig, AnimatePresence } from 'motion/react';
 import AddButton from './components/AddButton/AddButton.tsx';
 import SourceModal from './components/SourceModal/SourceModal.tsx';
 import TabBar from './components/TabBar/TabBar.tsx';
@@ -99,7 +99,7 @@ function App() {
   );
 
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={domMax} strict>
       <MotionConfig reducedMotion="user">
         <div className="app">
           <div className="app-content">
@@ -127,7 +127,7 @@ function App() {
           <div className="bottom-fade" aria-hidden />
           <div className="dock">
             <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
-            <AddButton onClick={openAdd} />
+            <AddButton onClick={openAdd} muted={modalOpen} />
           </div>
 
           <AnimatePresence onExitComplete={() => setEditing(null)}>

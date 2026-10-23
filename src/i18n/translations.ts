@@ -30,12 +30,12 @@ export const translations = {
     'modal.editTitle': 'Редактировать',
     'modal.newTitle': 'Новый источник',
     'modal.name': 'Название',
-    'modal.namePlaceholder': 'Например, Сбербанк',
-    'modal.amount': 'Сумма (₽)',
+    'modal.amount': 'Сумма',
     'modal.color': 'Цвет',
     'modal.customColor': 'Свой цвет',
     'modal.save': 'Сохранить',
     'modal.add': 'Добавить',
+    'modal.close': 'Закрыть',
 
     'donut.total': 'Всего',
 
@@ -73,12 +73,12 @@ export const translations = {
     'modal.editTitle': 'Edit',
     'modal.newTitle': 'New source',
     'modal.name': 'Name',
-    'modal.namePlaceholder': 'e.g. Bank of America',
-    'modal.amount': 'Amount (₽)',
+    'modal.amount': 'Amount',
     'modal.color': 'Color',
     'modal.customColor': 'Custom color',
     'modal.save': 'Save',
     'modal.add': 'Add',
+    'modal.close': 'Close',
 
     'donut.total': 'Total',
 
