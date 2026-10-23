@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LazyMotion, domMax, MotionConfig, AnimatePresence } from 'motion/react';
 import AddButton from './components/AddButton/AddButton.tsx';
+import Aurora from './components/Aurora/Aurora.tsx';
 import SourceModal from './components/SourceModal/SourceModal.tsx';
 import TabBar from './components/TabBar/TabBar.tsx';
 import type { TabId } from './components/TabBar/TabBar.tsx';
@@ -102,6 +103,7 @@ function App() {
     <LazyMotion features={domMax} strict>
       <MotionConfig reducedMotion="user">
         <div className="app">
+          {activeTab === 'main' && <Aurora />}
           <div className="app-content">
             {activeTab === 'main' && (
               <MainTabContent

@@ -1,0 +1,17 @@
+.aurora {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Языки сияния колышутся вокруг суммы и заголовка списка. */
+  height: min(480px, 58vh);
+  z-index: 0;
+  pointer-events: none;
+  animation: aurora-in 1.2s var(--ease-out) both;
+}
+
+@keyframes aurora-in {
+  from {
+    opacity: 0;
+  }
+}
