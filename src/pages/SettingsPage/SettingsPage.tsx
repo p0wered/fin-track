@@ -69,7 +69,7 @@ export default function SettingsPage({ data, onImport }: Props) {
         transition={{ duration: 0.5, ease: EASE, delay: 0.12 }}
       >
         <h2 className={styles.sectionTitle}>{t('settings.appearance')}</h2>
-        <div className={`${styles.group} glass`}>
+        <div className={`${styles.group} surface`}>
           <div className={styles.row}>
             <span className={styles.rowLabel}>{t('settings.theme')}</span>
             <div className={styles.segmented} role="group" aria-label={t('settings.theme')}>
@@ -124,7 +124,7 @@ export default function SettingsPage({ data, onImport }: Props) {
         transition={{ duration: 0.5, ease: EASE, delay: 0.19 }}
       >
         <h2 className={styles.sectionTitle}>{t('settings.data')}</h2>
-        <div className={`${styles.group} glass`}>
+        <div className={`${styles.group} surface`}>
           <button type="button" className={`${styles.row} ${styles.action}`} onClick={handleExport}>
             <Download size={20} strokeWidth={1.8} aria-hidden />
             {t('settings.export')}

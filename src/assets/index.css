@@ -4,14 +4,10 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  /* Файл пропатчен scripts/patch-steppe.py: добавлены моноширинные цифры (tnum)
-     и узкие пробелы для разрядов, которых нет в оригинале v0.1.
-     Родные метрики Steppe: ascent 750 / descent 250 при cap height 700, поэтому
-     текст сидит выше центра строки. Уравниваем поля над капителью и под базовой
-     линией, чтобы текст оптически центрировался в контейнерах. */
-  ascent-override: 85%;
-  descent-override: 15%;
-  line-gap-override: 0%;
+  /* Файл пропатчен scripts/patch-steppe.py: моноширинные цифры (tnum), узкие
+     пробелы для разрядов и вертикальные метрики 850/150 вместо родных 750/250,
+     чтобы текст центрировался в строке. Метрики зашиты в файл, а не заданы
+     через ascent/descent-override: Safari эти дескрипторы не поддерживает. */
 }
 
 :root,
@@ -20,6 +16,9 @@
   /* Сплошная поверхность — тон прежнего стекла на чёрном, без прозрачности. */
   --surface: #111111;
   --surface-pressed: #1e1e1e;
+  --sheet-bg: #161616;
+  --surface-raised: #232323;
+  --surface-raised-pressed: #2f2f2f;
   --surface-2: #141414;
   --surface-3: #2a2a2a;
   --text: #ffffff;
@@ -28,21 +27,17 @@
   --text-tertiary: rgba(255, 255, 255, 0.5);
   --border: #2a2a2a;
 
-  --glass-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.05));
-  --glass-fill-pressed: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.1));
-  --glass-stroke: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-  --glass-blur: 20px;
+  --surface-stroke: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
 
   --overlay: rgba(0, 0, 0, 0.6);
   --overlay-blur: 4px;
-  /* Свет падает сверху: заливка и обводка ярче у верхнего края. */
-  --sheet-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05) 60%);
+  /* Свет падает сверху: обводка шторки ярче у верхнего края. */
   --sheet-stroke: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04) 40%, rgba(255, 255, 255, 0.02));
   --shadow-sheet: 0 -16px 48px rgba(0, 0, 0, 0.6);
   --separator: rgba(255, 255, 255, 0.08);
   --bar-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
   --bar-rim: inset 0 1px 0.5px rgba(255, 255, 255, 0.14);
-  /* Сегментированный контрол — плоский, как в iOS; приглушён под стекло групп. */
+  /* Сегментированный контрол — плоский, как в iOS; приглушён под фон групп. */
   --seg-track: rgba(255, 255, 255, 0.06);
   --seg-thumb: rgba(255, 255, 255, 0.12);
   --grabber: rgba(255, 255, 255, 0.24);
@@ -58,6 +53,9 @@
   --bg: #f2f2f7;
   --surface: #ffffff;
   --surface-pressed: #e9e9ee;
+  --sheet-bg: #f2f2f7;
+  --surface-raised: #ffffff;
+  --surface-raised-pressed: #e5e5ea;
   --surface-2: #f4f4f6;
   --surface-3: #e6e6eb;
   --text: #1c1c1e;
@@ -65,14 +63,10 @@
   --text-tertiary: rgba(60, 60, 67, 0.62);
   --border: #e2e2e7;
 
-  --glass-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
-  --glass-fill-pressed: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.5));
-  --glass-stroke: linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.03));
-  --glass-blur: 20px;
+  --surface-stroke: linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.03));
 
   --overlay: rgba(0, 0, 0, 0.4);
   --overlay-blur: 4px;
-  --sheet-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.72) 60%);
   --sheet-stroke: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.06) 40%, rgba(0, 0, 0, 0.04));
   --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.12);
   --separator: rgba(60, 60, 67, 0.14);
@@ -124,11 +118,6 @@
   --weight-number: 400;
   --weight-label: 400;
 
-  /* Шум для дизеринга: белые и чёрные точки с альфой до ~2%, т. е. ±1–2 уровня
-     яркости. Без mix-blend-mode: у .glass из-за backdrop-filter изолированная
-     группа, и наложение смешивалось бы с почти прозрачной заливкой. */
-  --dither: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch' result='t'/%3E%3CfeColorMatrix in='t' result='w' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.07 0 0 0 -0.035'/%3E%3CfeColorMatrix in='t' result='b' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.07 0 0 0 0.035'/%3E%3CfeMerge%3E%3CfeMergeNode in='w'/%3E%3CfeMergeNode in='b'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
-
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
@@ -145,45 +134,22 @@
   --sheet-inset: 8px;
 }
 
-/* Стеклянная поверхность: полупрозрачная заливка + blur + градиентная обводка. */
-.glass {
-  position: relative;
-  background: var(--glass-fill);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-}
-
-/* Сплошная поверхность: та же обводка, но без прозрачности и размытия. */
+/* Сплошная поверхность с тонкой градиентной обводкой. */
 .surface {
   position: relative;
   background: var(--surface);
 }
 
-.glass::before,
 .surface::before {
   content: '';
   position: absolute;
   inset: 0;
   padding: 1px;
   border-radius: inherit;
-  background: var(--glass-stroke);
+  background: var(--surface-stroke);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  pointer-events: none;
-}
-
-/* Дизеринг: слабые градиенты стекла (5–10% белого) укладываются в пару
-   уровней из 256, и на больших площадях видны ступеньки. Шум размывает их
-   границы. z-index: -1 кладёт его поверх фона, но под содержимым
-   (.glass — контекст наложения из-за backdrop-filter). */
-.glass::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: var(--dither) 0 0 / 128px 128px;
   pointer-events: none;
 }
 

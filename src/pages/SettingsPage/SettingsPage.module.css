@@ -112,7 +112,7 @@
 }
 
 .action:active {
-  background: var(--glass-fill-pressed);
+  background: var(--surface-pressed);
 }
 
 .footer {

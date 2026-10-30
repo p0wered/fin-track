@@ -5,6 +5,7 @@ font-variant-numeric: tabular-nums не работал, а суммы не вы�
 Скрипт добавляет zero.tnum…nine.tnum шириной 640 ед. (контуры те же,
 отцентрованы), узкий неразрывный пробел U+202F для разрядов, U+2009,
 U+2007 и U+00A0. Существующие фичи (salt, case, ordn) сохраняются.
+Ещё выравнивает вертикальные метрики, чтобы текст центрировался в строке.
 
     pip install fonttools brotli
     python scripts/patch-steppe.py Steppe-original.woff2 src/assets/fonts/Steppe.woff2
@@ -68,7 +69,18 @@ feature tnum { sub [%s] by [%s]; } tnum;
 """ % (' '.join(digits), ' '.join(d + '.tnum' for d in digits))
 del f['GSUB']
 addOpenTypeFeaturesFromString(f, fea, tables=['GSUB'])
-f['head'].fontRevision = 0.002
+# Вертикальные метрики. Родные ascent 750 / descent 250 при cap height 700:
+# текст сидит выше центра строки. Уравниваем поля над капителью и под базовой
+# линией (850 / 150). В CSS это делали ascent/descent-override, но Safari их не
+# поддерживает, поэтому метрики зашиты в сам файл и одинаковы во всех браузерах.
+ASCENT, DESCENT = 850, 150
+hhea, os2 = f['hhea'], f['OS/2']
+hhea.ascent, hhea.descent, hhea.lineGap = ASCENT, -DESCENT, 0
+os2.sTypoAscender, os2.sTypoDescender, os2.sTypoLineGap = ASCENT, -DESCENT, 0
+os2.usWinAscent, os2.usWinDescent = ASCENT, DESCENT
+os2.fsSelection |= 1 << 7  # USE_TYPO_METRICS
+
+f['head'].fontRevision = 0.003
 f.flavor = 'woff2'
 f.save(dst)
 print('saved', dst)

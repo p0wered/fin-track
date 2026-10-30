@@ -17,8 +17,8 @@
 }
 
 /* Шторка «висит» над краями экрана. Нижние углы концентричны скруглению
-   дисплея, верхние — круглым кнопкам шапки. Стекло как у карточек, только
-   плотнее: белый градиент + сильное размытие. */
+   дисплея, верхние — круглым кнопкам шапки. Фон сплошной, чуть светлее
+   карточек, чтобы шторка отделялась от затемнённой страницы. */
 .sheet {
   display: flex;
   flex-direction: column;
@@ -26,9 +26,7 @@
   max-width: var(--content-max);
   max-height: calc(100dvh - 2 * var(--sheet-inset) - env(safe-area-inset-top));
   overflow: hidden;
-  background: var(--sheet-fill);
-  backdrop-filter: blur(40px) saturate(1.6);
-  -webkit-backdrop-filter: blur(40px) saturate(1.6);
+  background: var(--sheet-bg);
   border-radius: var(--radius-sheet) var(--radius-sheet) var(--radius-sheet-bottom)
     var(--radius-sheet-bottom);
   padding: 0 var(--space-5);
@@ -41,7 +39,7 @@
   border-radius: var(--radius-sheet);
 }
 
-.sheet:global(.glass)::before {
+.sheet:global(.surface)::before {
   background: var(--sheet-stroke);
 }
 
@@ -99,8 +97,14 @@
   transform: scale(0.92);
 }
 
-.circleBtn:global(.glass):active {
-  background: var(--glass-fill-pressed);
+/* Внутри шторки поверхности на ступень светлее её фона. */
+.circleBtn:global(.surface),
+.group:global(.surface) {
+  background: var(--surface-raised);
+}
+
+.circleBtn:global(.surface):active {
+  background: var(--surface-raised-pressed);
 }
 
 .confirmBtn {
@@ -213,7 +217,7 @@
 .customColor {
   position: relative;
   overflow: hidden;
-  background: var(--glass-fill-pressed);
+  background: var(--surface-raised-pressed);
 }
 
 .customIcon {

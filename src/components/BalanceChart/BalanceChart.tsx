@@ -53,12 +53,12 @@ export default function BalanceChart({ data }: Props) {
   if (sorted.length === 0) {
     return (
       <m.div
-        className={`${styles.empty} glass`}
+        className={`${styles.empty} surface`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE, delay: 0.15 }}
       >
-        <div className={`${styles.emptyIcon} glass`}>
+        <div className={`${styles.emptyIcon} surface`}>
           <ChartColumn size={26} strokeWidth={1.75} aria-hidden />
         </div>
         <p className={styles.emptyTitle}>{t('chart.empty')}</p>
@@ -73,7 +73,7 @@ export default function BalanceChart({ data }: Props) {
 
   return (
     <m.div
-      className={`${styles.wrap} glass`}
+      className={`${styles.wrap} surface`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}

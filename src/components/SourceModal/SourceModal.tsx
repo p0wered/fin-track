@@ -125,7 +125,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
         transition={{ duration: 0.25 }}
       />
       <m.div
-        className={`${styles.sheet} ${keyboardInset > 0 ? styles.lifted : ''} glass`}
+        className={`${styles.sheet} ${keyboardInset > 0 ? styles.lifted : ''} surface`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="source-sheet-title"
@@ -147,7 +147,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
           <div className={styles.header}>
             <button
               type="button"
-              className={`${styles.circleBtn} glass`}
+              className={`${styles.circleBtn} surface`}
               onClick={onClose}
               aria-label={t('modal.close')}
             >
@@ -158,7 +158,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
             </h3>
             <button
               type="button"
-              className={`${styles.circleBtn} ${isValid ? styles.confirmBtn : 'glass'}`}
+              className={`${styles.circleBtn} ${isValid ? styles.confirmBtn : 'surface'}`}
               onClick={handleSave}
               disabled={!isValid}
               aria-label={source ? t('modal.save') : t('modal.add')}
@@ -169,7 +169,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
         </div>
 
         <div className={styles.body}>
-          <m.div className={`${styles.group} glass`} variants={childVariants}>
+          <m.div className={`${styles.group} surface`} variants={childVariants}>
             <input
               className={`${styles.row} ${styles.input}`}
               type="text"
@@ -197,7 +197,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
 
           <m.div variants={childVariants}>
             <div className={styles.sectionLabel}>{t('modal.color')}</div>
-            <m.div className={`${styles.group} ${styles.colorPicker} glass`} variants={colorPickerVariants}>
+            <m.div className={`${styles.group} ${styles.colorPicker} surface`} variants={colorPickerVariants}>
               {PALETTE.map((c) => (
                 <m.button
                   key={c.dark}
