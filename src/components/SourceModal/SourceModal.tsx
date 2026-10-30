@@ -125,7 +125,7 @@ export default function SourceModal({ source, onSave, onClose }: Props) {
         transition={{ duration: 0.25 }}
       />
       <m.div
-        className={`${styles.sheet} glass`}
+        className={`${styles.sheet} ${keyboardInset > 0 ? styles.lifted : ''} glass`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="source-sheet-title"

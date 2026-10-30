@@ -3,23 +3,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   min-height: 248px;
   margin-bottom: var(--space-8);
   text-align: center;
 }
 
 .heroLabel {
-  font-size: var(--fs-md);
+  composes: type-label from global;
   color: var(--text-secondary);
 }
 
 .heroAmount {
-  font-size: var(--fs-hero);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
+  composes: type-display from global;
   white-space: nowrap;
+}
+
+.heroCurrency {
+  margin-left: 0.12em;
+  font-size: 0.58em;
+  letter-spacing: 0;
+  color: var(--text-secondary);
 }
 
 .sourcesSection {
@@ -29,27 +33,20 @@
 .sectionHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-4);
+  align-items: baseline;
+  margin-bottom: 10px;
   padding: 0 var(--space-1);
 }
 
 .sectionTitle {
-  font-size: var(--fs-base);
-  font-weight: 400;
+  composes: type-label from global;
+  color: var(--text-secondary);
 }
 
 .sectionCount {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 24px;
-  padding: 0 var(--space-3);
-  font-size: var(--fs-sm);
-  line-height: 1;
-  color: var(--text);
-  border-radius: var(--radius-pill);
+  composes: type-label from global;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Карточки шире контента на 8px с каждой стороны; клип по краю экрана,
@@ -66,13 +63,6 @@
   color: var(--text-secondary);
 }
 
-.emptyState p {
-  font-size: var(--fs-body);
-  margin-top: 10px;
-}
-
-.emptyIcon {
-  font-size: 2.5rem;
-  opacity: 0.4;
-  animation: float 3s ease-in-out infinite;
+.emptyText {
+  composes: type-body from global;
 }

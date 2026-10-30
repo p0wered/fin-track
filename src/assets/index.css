@@ -4,7 +4,9 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  /* Родные метрики Steppe: ascent 750 / descent 250 при cap height 700, поэтому
+  /* Файл пропатчен scripts/patch-steppe.py: добавлены моноширинные цифры (tnum)
+     и узкие пробелы для разрядов, которых нет в оригинале v0.1.
+     Родные метрики Steppe: ascent 750 / descent 250 при cap height 700, поэтому
      текст сидит выше центра строки. Уравниваем поля над капителью и под базовой
      линией, чтобы текст оптически центрировался в контейнерах. */
   ascent-override: 85%;
@@ -19,7 +21,9 @@
   --surface-2: #141414;
   --surface-3: #2a2a2a;
   --text: #ffffff;
-  --text-secondary: #bfbfbf;
+  /* Три уровня текста: жирного нет, поэтому иерархию держат размер и цвет. */
+  --text-secondary: rgba(255, 255, 255, 0.66);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
   --border: #2a2a2a;
 
   --glass-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.05));
@@ -54,7 +58,8 @@
   --surface-2: #f4f4f6;
   --surface-3: #e6e6eb;
   --text: #1c1c1e;
-  --text-secondary: #8a8a8e;
+  --text-secondary: rgba(60, 60, 67, 0.78);
+  --text-tertiary: rgba(60, 60, 67, 0.62);
   --border: #e2e2e7;
 
   --glass-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
@@ -98,19 +103,28 @@
   --radius-2xl: 24px;
   --radius-group: 22px;
   --radius-sheet: 38px;
+  /* Скругление экрана; на iPhone в PWA его подставляет applyDisplayRadius().
+     Значение по умолчанию даёт низу шторки те же 38px, что и верху. */
+  --display-radius: calc(var(--radius-sheet) + var(--sheet-inset));
+  --radius-sheet-bottom: calc(var(--display-radius) - var(--sheet-inset));
   --radius-pill: 999px;
   --radius-circle: 50%;
 
-  --fs-2xs: 0.7rem;
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.8rem;
-  --fs-body: 0.9rem;
-  --fs-md: 0.95rem;
-  --fs-base: 1rem;
-  --fs-lg: 1.1rem;
-  --fs-title: 1.15rem;
-  --fs-display: 1.35rem;
-  --fs-hero: 2.125rem;
+  /* Шрифты и веса ролей. Сейчас всё Steppe Regular; при смене шрифта
+     правятся только эти переменные. */
+  --font-display: 'Steppe', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --font-text: 'Steppe', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  --weight-display: 400;
+  --weight-title: 400;
+  --weight-headline: 400;
+  --weight-strong: 400;
+  --weight-number: 400;
+  --weight-label: 400;
+
+  /* Шум для дизеринга: белые и чёрные точки с альфой до ~2%, т. е. ±1–2 уровня
+     яркости. Без mix-blend-mode: у .glass из-за backdrop-filter изолированная
+     группа, и наложение смешивалось бы с почти прозрачной заливкой. */
+  --dither: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch' result='t'/%3E%3CfeColorMatrix in='t' result='w' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.07 0 0 0 -0.035'/%3E%3CfeColorMatrix in='t' result='b' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.07 0 0 0 0.035'/%3E%3CfeMerge%3E%3CfeMergeNode in='w'/%3E%3CfeMergeNode in='b'/%3E%3C/feMerge%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
 
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -149,6 +163,95 @@
   pointer-events: none;
 }
 
+/* Дизеринг: слабые градиенты стекла (5–10% белого) укладываются в пару
+   уровней из 256, и на больших площадях видны ступеньки. Шум размывает их
+   границы. z-index: -1 кладёт его поверх фона, но под содержимым
+   (.glass — контекст наложения из-за backdrop-filter). */
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--dither) 0 0 / 128px 128px;
+  pointer-events: none;
+}
+
+/* Типографические роли. Подключаются в модулях через
+   `composes: type-… from global`. Интерлиньяж в целых пикселях; трекинг
+   по кеглю: мелкому разрядка, крупному сжатие (Steppe широкий). */
+.type-display {
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
+  font-size: 3rem;
+  line-height: 3.25rem;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+.type-title {
+  font-family: var(--font-display);
+  font-weight: var(--weight-title);
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  letter-spacing: -0.025em;
+}
+
+.type-headline {
+  font-family: var(--font-text);
+  font-weight: var(--weight-headline);
+  font-size: 1.0625rem;
+  line-height: 1.375rem;
+  letter-spacing: -0.01em;
+}
+
+.type-body {
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.25rem;
+  letter-spacing: 0;
+}
+
+.type-number {
+  font-family: var(--font-text);
+  font-weight: var(--weight-number);
+  font-size: 1.0625rem;
+  line-height: 1.25rem;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.type-subhead {
+  font-family: var(--font-text);
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+  letter-spacing: 0.01em;
+}
+
+.type-footnote {
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  letter-spacing: 0.01em;
+}
+
+/* Подписи секций: мелкие прописные с разрядкой, как в сгруппированных списках iOS. */
+.type-label {
+  font-family: var(--font-text);
+  font-weight: var(--weight-label);
+  font-size: 0.8125rem;
+  line-height: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.type-caption {
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.02em;
+}
+
 .dock {
   position: fixed;
   left: 50%;
@@ -172,11 +275,6 @@
   z-index: 40;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
 *,
 *::before,
 *::after {
@@ -192,8 +290,7 @@ html {
 }
 
 body {
-  font-family: 'Steppe', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-    'Inter', 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.25;
@@ -210,6 +307,15 @@ input,
 button,
 textarea {
   font-family: inherit;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 #root {

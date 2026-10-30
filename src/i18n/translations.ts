@@ -41,6 +41,7 @@ export const translations = {
 
     'dynamics.title': 'Динамика баланса',
     'dynamics.aria': 'Динамика баланса по месяцам',
+    'dynamics.perMonth': 'за месяц',
     'chart.empty': 'Пока нет данных по месяцам',
     'chart.emptyHint': 'Баланс на конец каждого месяца будет сохраняться автоматически',
 
@@ -84,6 +85,7 @@ export const translations = {
 
     'dynamics.title': 'Balance dynamics',
     'dynamics.aria': 'Monthly balance dynamics',
+    'dynamics.perMonth': 'this month',
     'chart.empty': 'No monthly data yet',
     'chart.emptyHint': 'The balance at the end of each month is saved automatically',
 

@@ -2,10 +2,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './assets/index.css'
 import { applyTheme, loadTheme } from './theme/theme.ts'
+import { applyDisplayRadius } from './theme/displayRadius.ts'
 import { SettingsProvider } from './settings/SettingsContext.tsx'
 import App from './App.tsx'
 
 applyTheme(loadTheme())
+applyDisplayRadius()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

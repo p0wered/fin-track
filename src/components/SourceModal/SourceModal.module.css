@@ -16,8 +16,9 @@
   -webkit-backdrop-filter: blur(var(--overlay-blur));
 }
 
-/* Шторка «висит» над краями экрана, углы — концентричны скруглению дисплея.
-   Стекло как у карточек, только плотнее: белый градиент + сильное размытие. */
+/* Шторка «висит» над краями экрана. Нижние углы концентричны скруглению
+   дисплея, верхние — круглым кнопкам шапки. Стекло как у карточек, только
+   плотнее: белый градиент + сильное размытие. */
 .sheet {
   display: flex;
   flex-direction: column;
@@ -28,9 +29,16 @@
   background: var(--sheet-fill);
   backdrop-filter: blur(40px) saturate(1.6);
   -webkit-backdrop-filter: blur(40px) saturate(1.6);
-  border-radius: var(--radius-sheet);
+  border-radius: var(--radius-sheet) var(--radius-sheet) var(--radius-sheet-bottom)
+    var(--radius-sheet-bottom);
   padding: 0 var(--space-5);
   box-shadow: var(--shadow-sheet);
+  transition: border-radius var(--dur-base) var(--ease-out);
+}
+
+/* Над клавиатурой низ шторки уже не у края экрана — углы обычные. */
+.sheet.lifted {
+  border-radius: var(--radius-sheet);
 }
 
 .sheet:global(.glass)::before {
@@ -65,8 +73,7 @@
 }
 
 .title {
-  font-size: var(--fs-md);
-  font-weight: 400;
+  composes: type-headline from global;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -140,17 +147,17 @@
 }
 
 .rowLabel {
+  composes: type-body from global;
   flex-shrink: 0;
-  font-size: var(--fs-base);
 }
 
 .input {
+  composes: type-body from global;
   min-width: 0;
   border: none;
   outline: none;
   background: transparent;
   color: var(--text);
-  font-size: var(--fs-base);
 }
 
 .input::placeholder {
@@ -160,16 +167,17 @@
 .amountInput {
   flex: 1;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .currency {
+  composes: type-body from global;
   flex-shrink: 0;
-  font-size: var(--fs-base);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
 }
 
 .sectionLabel {
-  font-size: var(--fs-sm);
+  composes: type-label from global;
   color: var(--text-secondary);
   margin: 0 0 var(--space-2) var(--space-5);
 }

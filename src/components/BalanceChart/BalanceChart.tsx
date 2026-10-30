@@ -1,7 +1,7 @@
 import { useMemo, useRef, useEffect } from 'react';
 import { m } from 'motion/react';
 import { ChartColumn } from 'lucide-react';
-import { formatAmount, formatMonthLabel, formatMonthShort } from '../../types.ts';
+import { formatAmount, formatCompact, formatMonthLabel, formatMonthShort } from '../../types.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
 import styles from './BalanceChart.module.css';
 
@@ -43,7 +43,7 @@ export default function BalanceChart({ data }: Props) {
         <div className={`${styles.emptyIcon} glass`}>
           <ChartColumn size={26} strokeWidth={1.75} aria-hidden />
         </div>
-        <p>{t('chart.empty')}</p>
+        <p className={styles.emptyTitle}>{t('chart.empty')}</p>
         <p className={styles.hint}>{t('chart.emptyHint')}</p>
       </m.div>
     );
@@ -87,7 +87,7 @@ export default function BalanceChart({ data }: Props) {
                   <div className={styles.barRailTop} style={{ height: RAIL_TOP_PADDING }} />
                   <div className={styles.barRailSpacer} />
                   <div className={styles.barValue} title={formatAmount(balance, locale)}>
-                    {formatAmount(balance, locale)}
+                    {formatCompact(balance, locale)}
                   </div>
                   <div
                     className={styles.bar}

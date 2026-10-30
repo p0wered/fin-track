@@ -55,8 +55,8 @@
 }
 
 .label {
+  composes: type-caption from global;
   max-width: 100%;
-  font-size: var(--fs-2xs);
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;

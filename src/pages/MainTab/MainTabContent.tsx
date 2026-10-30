@@ -4,7 +4,7 @@ import SourceItem from '../../components/SourceItem/SourceItem.tsx';
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
 import type { FinanceSource } from '../../types.ts';
-import { formatAmount } from '../../types.ts';
+import { formatNumber } from '../../types.ts';
 import styles from './MainTabContent.module.css';
 
 interface Props {
@@ -37,7 +37,10 @@ export default function MainTabContent({ sources, total, onEdit, onDelete }: Pro
         transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
       >
         <span className={styles.heroLabel}>{t('donut.total')}</span>
-        <span className={styles.heroAmount}>{formatAmount(animatedTotal, locale)}</span>
+        <span className={styles.heroAmount}>
+          {formatNumber(animatedTotal, locale)}
+          <span className={styles.heroCurrency}>₽</span>
+        </span>
       </m.section>
 
       <section className={styles.sourcesSection}>
@@ -50,11 +53,11 @@ export default function MainTabContent({ sources, total, onEdit, onDelete }: Pro
           <h2 className={styles.sectionTitle}>{t('sources.title')}</h2>
           {count > 0 && (
             <m.span
-              className={`${styles.sectionCount} glass`}
+              className={styles.sectionCount}
               key={count}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: EASE }}
             >
               {count}
             </m.span>
@@ -68,8 +71,7 @@ export default function MainTabContent({ sources, total, onEdit, onDelete }: Pro
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: EASE, delay: 0.25 }}
           >
-            <div className={styles.emptyIcon}>💰</div>
-            <p>{t('sources.empty')}</p>
+            <p className={styles.emptyText}>{t('sources.empty')}</p>
           </m.div>
         ) : (
           <div className={styles.list}>

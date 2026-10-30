@@ -1,9 +1,9 @@
-import { useState, useRef, useCallback } from 'react';
-import { m } from 'motion/react';
-import type { Variants } from 'motion/react';
+import { useRef, useCallback, useEffect } from 'react';
+import { m, animate, useMotionValue, useTransform } from 'motion/react';
+import type { MotionValue, Variants } from 'motion/react';
 import { SquarePen, Trash2 } from 'lucide-react';
 import type { FinanceSource } from '../../types.ts';
-import { formatAmount } from '../../types.ts';
+import { formatNumber, formatPercent } from '../../types.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
 import { resolveColor } from '../../theme/colors.ts';
 import styles from './SourceItem.module.css';
@@ -26,6 +26,13 @@ const ACTION_GAP = 8;
 const ACTION_WIDTH = 2 * (ITEM_HEIGHT + ACTION_GAP);
 const SNAP_THRESHOLD = ACTION_WIDTH / 2;
 const RUBBER = 0.55;
+// Без отскока: пользователь не любит «пружинистость».
+const SNAP_SPRING = { type: 'spring', bounce: 0, duration: 0.4 } as const;
+
+// Куда «докатится» карточка после броска (формула Apple, как у инерции скролла).
+function project(velocity: number, decelerationRate = 0.998) {
+  return ((velocity / 1000) * decelerationRate) / (1 - decelerationRate);
+}
 
 function rubberband(distance: number, dimension: number) {
   return (distance * dimension * RUBBER) / (dimension + RUBBER * distance);
@@ -53,30 +60,57 @@ const itemVariants: Variants = {
   },
 };
 
+/**
+ * Кнопка свайпа в духе уведомлений iOS: стоит на своём месте и проявляется
+ * (растёт и становится видимой) по мере того, как карточка открывает её слот.
+ * `revealAt` — сдвиг карточки, при котором кнопка видна полностью.
+ */
+function SwipeAction({ x, revealAt, label, icon, onClick }: {
+  x: MotionValue<number>;
+  revealAt: number;
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}) {
+  const progress = useTransform(x, [-revealAt, -(revealAt - ITEM_HEIGHT)], [1, 0]);
+  const scale = useTransform(progress, [0, 1], [0.6, 1]);
+  const opacity = useTransform(progress, [0, 0.6], [0, 1]);
+  return (
+    <m.button
+      className={`${styles.actionBtn} glass`}
+      style={{ scale, opacity }}
+      onClick={onClick}
+      aria-label={label}
+    >
+      {icon}
+    </m.button>
+  );
+}
+
 export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpen, onRequestOpen, onTouchStartItem, onClose }: Props) {
   const { t, locale, theme } = useSettings();
-  const [offset, setOffset] = useState(0);
-  const [animate, setAnimate] = useState(false);
+  const x = useMotionValue(0);
   const startXRef = useRef(0);
   const startYRef = useRef(0);
   const baseRef = useRef(0);
   const movedRef = useRef(false);
   const dirRef = useRef<'h' | 'v' | null>(null);
 
+  // Пружина стартует с текущей позиции и скорости пальца, поэтому карточку
+  // можно перехватить на середине анимации.
   const snapTo = useCallback((val: number) => {
-    setAnimate(true);
-    setOffset(val);
-  }, []);
+    animate(x, val, { ...SNAP_SPRING, velocity: x.getVelocity() });
+  }, [x]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     onTouchStartItem();
+    x.stop();
     startXRef.current = e.touches[0].clientX;
     startYRef.current = e.touches[0].clientY;
-    baseRef.current = offset;
+    baseRef.current = x.get();
     movedRef.current = false;
     dirRef.current = null;
-    setAnimate(false);
-  }, [onTouchStartItem, offset]);
+  }, [onTouchStartItem, x]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     const dx = e.touches[0].clientX - startXRef.current;
@@ -90,31 +124,29 @@ export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpe
     if (dirRef.current === 'v') return;
 
     if (Math.abs(dx) > 4) movedRef.current = true;
-    setOffset(withRubberband(baseRef.current + dx, -ACTION_WIDTH, 0));
-  }, []);
+    x.set(withRubberband(baseRef.current + dx, -ACTION_WIDTH, 0));
+  }, [x]);
 
   const handleTouchEnd = useCallback(() => {
     if (!movedRef.current) {
-      if (offset !== 0) {
+      if (x.get() !== 0) {
         snapTo(0);
         onClose();
       }
       return;
     }
-    const willOpen = offset < -SNAP_THRESHOLD;
+    // Решаем по точке, куда карточка докатится, а не где отпустили:
+    // короткий бросок влево тоже открывает кнопки.
+    const willOpen = x.get() + project(x.getVelocity()) < -SNAP_THRESHOLD;
     snapTo(willOpen ? -ACTION_WIDTH : 0);
     if (willOpen) onRequestOpen();
     else onClose();
-  }, [offset, snapTo, onRequestOpen, onClose]);
+  }, [x, snapTo, onRequestOpen, onClose]);
 
-  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
-  if (prevIsOpen !== isOpen) {
-    setPrevIsOpen(isOpen);
-    if (!isOpen && offset !== 0) {
-      setAnimate(true);
-      setOffset(0);
-    }
-  }
+  // Закрываемся, когда открыли соседнюю карточку или тапнули мимо.
+  useEffect(() => {
+    if (!isOpen && x.get() !== 0) snapTo(0);
+  }, [isOpen, x, snapTo]);
 
   return (
     <m.div
@@ -126,52 +158,55 @@ export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpe
       exit="exit"
     >
       <div
-        className={styles.row}
+        className={styles.track}
         style={{
           '--item-height': `${ITEM_HEIGHT}px`,
           '--action-gap': `${ACTION_GAP}px`,
-          transform: `translateX(${offset}px)`,
-          transition: animate ? 'transform 0.45s cubic-bezier(.22,1.2,.36,1)' : 'none',
         } as React.CSSProperties}
-        onTransitionEnd={() => setAnimate(false)}
       >
-        <div
-          className={`${styles.item} glass`}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div className={styles.dot} style={{ background: resolveColor(source.color, theme) }} />
-          <div className={styles.info}>
-            <span className={styles.name}>{source.name}</span>
-            <span className={styles.pct}>{pct.toFixed(1)}%</span>
-          </div>
-          <span className={styles.amount}>{formatAmount(source.amount, locale)}</span>
-        </div>
+        {/* Кнопки не едут вместе с карточкой, а ждут под ней у правого края. */}
         <div className={styles.actions}>
-          <button
-            className={`${styles.actionBtn} glass`}
-            onClick={() => {
-              snapTo(0);
-              onClose();
-              onDelete();
-            }}
-            aria-label={t('item.delete')}
-          >
-            <Trash2 size={22} strokeWidth={1.75} aria-hidden />
-          </button>
-          <button
-            className={`${styles.actionBtn} glass`}
+          <SwipeAction
+            x={x}
+            revealAt={ACTION_WIDTH}
+            label={t('item.edit')}
+            icon={<SquarePen size={22} strokeWidth={1.75} aria-hidden />}
             onClick={() => {
               snapTo(0);
               onClose();
               onEdit();
             }}
-            aria-label={t('item.edit')}
-          >
-            <SquarePen size={22} strokeWidth={1.75} aria-hidden />
-          </button>
+          />
+          <SwipeAction
+            x={x}
+            revealAt={ACTION_WIDTH / 2}
+            label={t('item.delete')}
+            icon={<Trash2 size={22} strokeWidth={1.75} aria-hidden />}
+            onClick={() => {
+              snapTo(0);
+              onClose();
+              onDelete();
+            }}
+          />
         </div>
+        <m.div className={styles.row} style={{ x }}>
+          <div
+            className={`${styles.item} glass`}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className={styles.dot} style={{ background: resolveColor(source.color, theme) }} />
+            <div className={styles.info}>
+              <span className={styles.name}>{source.name}</span>
+              <span className={styles.pct}>{formatPercent(pct / 100, locale)}</span>
+            </div>
+            <span className={styles.amount}>
+              {formatNumber(source.amount, locale)}
+              <span className={styles.currency}>₽</span>
+            </span>
+          </div>
+        </m.div>
       </div>
     </m.div>
   );

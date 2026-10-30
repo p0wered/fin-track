@@ -53,8 +53,9 @@
 }
 
 .barValue {
-  font-size: var(--fs-2xs);
-  color: var(--text-secondary);
+  composes: type-caption from global;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
   margin-bottom: var(--space-2);
   white-space: nowrap;
   max-width: 100%;
@@ -86,8 +87,8 @@
 }
 
 .barLabel {
-  font-size: var(--fs-2xs);
-  color: var(--text-secondary);
+  composes: type-caption from global;
+  color: var(--text-tertiary);
   margin-top: var(--space-2);
   white-space: nowrap;
 }
@@ -113,15 +114,13 @@
   color: var(--text);
 }
 
-.empty p {
-  font-size: var(--fs-base);
+.emptyTitle {
+  composes: type-body from global;
   color: var(--text);
   margin-bottom: var(--space-2);
 }
 
-/* выше специфичность, чем у `.empty p`, — без !important */
-.empty .hint {
-  font-size: var(--fs-sm);
+.hint {
+  composes: type-footnote from global;
   color: var(--text-secondary);
-  line-height: 1.4;
 }

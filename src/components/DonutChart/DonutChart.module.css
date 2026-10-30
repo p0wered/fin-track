@@ -19,12 +19,11 @@
 }
 
 .label {
-  font-size: var(--fs-sm);
+  composes: type-footnote from global;
   color: var(--text-secondary);
   margin-bottom: 2px;
 }
 
 .amount {
-  font-size: var(--fs-display);
-  font-weight: 700;
+  composes: type-title from global;
 }
