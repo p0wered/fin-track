@@ -77,7 +77,7 @@ function SwipeAction({ x, revealAt, label, icon, onClick }: {
   const opacity = useTransform(progress, [0, 0.6], [0, 1]);
   return (
     <m.button
-      className={`${styles.actionBtn} glass`}
+      className={`${styles.actionBtn} surface`}
       style={{ scale, opacity }}
       onClick={onClick}
       aria-label={label}
@@ -191,7 +191,7 @@ export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpe
         </div>
         <m.div className={styles.row} style={{ x }}>
           <div
-            className={`${styles.item} glass`}
+            className={`${styles.item} surface`}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}

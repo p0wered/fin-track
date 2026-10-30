@@ -1,0 +1,10 @@
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Свет гаснет к ~70% высоты — под суммой, над списком. */
+  height: min(640px, 76vh);
+  z-index: 0;
+  pointer-events: none;
+}

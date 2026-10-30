@@ -51,7 +51,7 @@
 }
 
 .actionBtn:active {
-  background: var(--glass-fill-pressed);
+  background: var(--surface-pressed);
 }
 
 .dot {

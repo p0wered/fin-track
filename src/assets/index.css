@@ -17,7 +17,9 @@
 :root,
 :root[data-theme='dark'] {
   --bg: #000000;
-  --surface: #141414;
+  /* Сплошная поверхность — тон прежнего стекла на чёрном, без прозрачности. */
+  --surface: #111111;
+  --surface-pressed: #1e1e1e;
   --surface-2: #141414;
   --surface-3: #2a2a2a;
   --text: #ffffff;
@@ -55,6 +57,7 @@
 :root[data-theme='light'] {
   --bg: #f2f2f7;
   --surface: #ffffff;
+  --surface-pressed: #e9e9ee;
   --surface-2: #f4f4f6;
   --surface-3: #e6e6eb;
   --text: #1c1c1e;
@@ -150,7 +153,14 @@
   -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
-.glass::before {
+/* Сплошная поверхность: та же обводка, но без прозрачности и размытия. */
+.surface {
+  position: relative;
+  background: var(--surface);
+}
+
+.glass::before,
+.surface::before {
   content: '';
   position: absolute;
   inset: 0;
