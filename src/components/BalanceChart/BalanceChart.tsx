@@ -12,6 +12,7 @@ const BAR_MIN_WIDTH = 56;
 const BAR_AREA_HEIGHT = 220;
 const VALUE_AREA_HEIGHT = 18;
 const RAIL_TOP_PADDING = 8;
+const FADE = 32;
 
 interface Props {
   data: [string, number][];
@@ -28,8 +29,25 @@ export default function BalanceChart({ data }: Props) {
   const sorted = useMemo(() => [...data].sort(([a], [b]) => a.localeCompare(b)), [data]);
 
   useEffect(() => {
-    if (!containerRef.current || sorted.length === 0) return;
-    containerRef.current.scrollLeft = containerRef.current.scrollWidth;
+    const el = containerRef.current;
+    if (!el || sorted.length === 0) return;
+    el.scrollLeft = el.scrollWidth;
+
+    // Затухание у края растёт вместе со скрытой за ним частью, до FADE px.
+    const updateFade = () => {
+      const left = el.scrollLeft;
+      const right = el.scrollWidth - el.clientWidth - el.scrollLeft;
+      el.style.setProperty('--fade-left', `${Math.min(Math.max(left, 0), FADE)}px`);
+      el.style.setProperty('--fade-right', `${Math.min(Math.max(right, 0), FADE)}px`);
+    };
+    updateFade();
+    el.addEventListener('scroll', updateFade, { passive: true });
+    const ro = new ResizeObserver(updateFade);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', updateFade);
+      ro.disconnect();
+    };
   }, [sorted.length]);
 
   if (sorted.length === 0) {

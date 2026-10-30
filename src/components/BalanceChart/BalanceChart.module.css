@@ -10,9 +10,22 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding-bottom: var(--space-1);
-  /* Прошлые месяцы уходят за левый край мягко, а не обрезом. */
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 32px);
-  mask-image: linear-gradient(to right, transparent, #000 32px);
+  /* Столбцы уходят за край мягко, а не обрезом. Ширину затухания задаёт
+     скрипт по тому, сколько скрыто за краем: нечего листать — нет затухания. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-left, 0px),
+    #000 calc(100% - var(--fade-right, 0px)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-left, 0px),
+    #000 calc(100% - var(--fade-right, 0px)),
+    transparent
+  );
 }
 
 .scroll::-webkit-scrollbar {

@@ -141,7 +141,7 @@
   position: absolute;
   top: 0;
   left: var(--space-5);
-  right: 0;
+  right: var(--space-5);
   height: 0.5px;
   background: var(--separator);
 }

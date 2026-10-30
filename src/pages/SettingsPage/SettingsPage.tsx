@@ -134,7 +134,6 @@ export default function SettingsPage({ data, onImport }: Props) {
             {t('settings.import')}
           </button>
         </div>
-        <p className={styles.footer}>{t('settings.dataDesc')}</p>
 
         <input
           ref={fileRef}
