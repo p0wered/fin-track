@@ -46,7 +46,14 @@
 
   --tabbar-bg: rgba(255, 255, 255, 0.08);
   --tabbar-border: rgba(255, 255, 255, 0.05);
-  --tabbar-thumb: rgba(255, 255, 255, 0.1);
+
+  /* Стекло glisse (таб-бар, .glass): темнее, чем в glisse, с приглушённым
+     бликом и линией края. */
+  --lg-glass: rgb(32 32 32 / 0.58);
+  --lg-blur: 12px;
+  --lg-rim-shine: 0.06;
+  --lg-edge: rgb(255 255 255 / 0.04);
+  --glass-pressed: rgb(60 60 60 / 0.62);
 }
 
 :root[data-theme='light'] {
@@ -80,7 +87,8 @@
 
   --tabbar-bg: rgba(255, 255, 255, 0.72);
   --tabbar-border: rgba(0, 0, 0, 0.06);
-  --tabbar-thumb: rgba(0, 0, 0, 0.06);
+
+  --glass-pressed: rgb(236 236 240 / 0.85);
 }
 
 :root {
@@ -138,6 +146,16 @@
 .surface {
   position: relative;
   background: var(--surface);
+}
+
+/* Стекло таб-бара для своих элементов: фон и размытие из темы, обводку
+   (--lg-rim) рисует useRim из glisse. */
+.glass {
+  background-color: var(--lg-glass);
+  background-image: var(--lg-rim, none);
+  background-size: 100% 100%;
+  -webkit-backdrop-filter: blur(var(--lg-blur, 3px)) saturate(1.5);
+  backdrop-filter: blur(var(--lg-blur, 3px)) saturate(1.5);
 }
 
 .surface::before {

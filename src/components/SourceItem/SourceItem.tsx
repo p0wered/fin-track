@@ -2,6 +2,7 @@ import { useRef, useCallback, useEffect } from 'react';
 import { m, animate, useMotionValue, useTransform } from 'motion/react';
 import type { MotionValue, Variants } from 'motion/react';
 import { SquarePen, Trash2 } from 'lucide-react';
+import { useRim } from '../../glisse/index.ts';
 import type { FinanceSource } from '../../types.ts';
 import { formatNumber, formatPercent } from '../../types.ts';
 import { useSettings } from '../../settings/SettingsContext.tsx';
@@ -75,9 +76,12 @@ function SwipeAction({ x, revealAt, label, icon, onClick }: {
   const progress = useTransform(x, [-revealAt, -(revealAt - ITEM_HEIGHT)], [1, 0]);
   const scale = useTransform(progress, [0, 1], [0.6, 1]);
   const opacity = useTransform(progress, [0, 0.6], [0, 1]);
+  const ref = useRef<HTMLButtonElement>(null);
+  useRim(ref);
   return (
     <m.button
-      className={`${styles.actionBtn} surface`}
+      ref={ref}
+      className={`${styles.actionBtn} glass`}
       style={{ scale, opacity }}
       onClick={onClick}
       aria-label={label}
@@ -95,6 +99,8 @@ export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpe
   const baseRef = useRef(0);
   const movedRef = useRef(false);
   const dirRef = useRef<'h' | 'v' | null>(null);
+  const itemRef = useRef<HTMLDivElement>(null);
+  useRim(itemRef);
 
   // Пружина стартует с текущей позиции и скорости пальца, поэтому карточку
   // можно перехватить на середине анимации.
@@ -191,7 +197,8 @@ export default function SourceItem({ source, pct, index, onEdit, onDelete, isOpe
         </div>
         <m.div className={styles.row} style={{ x }}>
           <div
-            className={`${styles.item} surface`}
+            ref={itemRef}
+            className={`${styles.item} glass`}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}

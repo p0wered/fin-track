@@ -47,11 +47,11 @@
   color: var(--text);
   cursor: pointer;
   padding: 0;
-  transition: background var(--dur-fast);
+  transition: background-color var(--dur-fast);
 }
 
 .actionBtn:active {
-  background: var(--surface-pressed);
+  background-color: var(--glass-pressed);
 }
 
 .dot {
